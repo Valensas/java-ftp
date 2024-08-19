@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.24"
+    id("jacoco")
     id("org.jmailen.kotlinter") version "4.4.1"
     id("org.springframework.boot") version "3.3.2"
     id("io.spring.dependency-management") version "1.1.6"
@@ -46,6 +47,18 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                counter = "LINE"
+                minimum = "0.98".toBigDecimal()
+            }
+        }
+    }
 }
 
 publishing {

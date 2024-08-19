@@ -15,13 +15,14 @@ class EmbeddedSftpServer {
     fun start(
         username: String,
         password: String,
+        host: String = "localhost"
     ) {
         serverRoot = Files.createTempDirectory("ftp-test")
         sshServer = SshServer.setUpDefaultServer()
         sshServer.keyPairProvider = setProvider()
         sshServer.subsystemFactories = listOf(SftpSubsystemFactory())
         sshServer.port = 0
-        sshServer.host = "localhost"
+        sshServer.host = host
         sshServer.passwordAuthenticator =
             PasswordAuthenticator { usernameTest: String, passwordTest: String, session: ServerSession? ->
                 usernameTest == username && passwordTest == password
