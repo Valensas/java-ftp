@@ -11,18 +11,23 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
-import kotlin.random.Random
+import java.net.ServerSocket
 import kotlin.test.assertTrue
 
 @SpringBootTest
 class FtpApplicationTests {
     private val ftpClientFactory = FtpClientFactory()
 
+    private fun getRandomFreePort(): Int {
+        ServerSocket(0).use { serverSocket ->
+            return serverSocket.localPort
+        }
+    }
     @Test
     fun `Test ftp connection`() {
         assertDoesNotThrow {
             val server = EmbeddedFtpServer()
-            server.start("username", "password", ConnectionType.FTP, port = Random.nextInt(1000))
+            server.start("username", "password", ConnectionType.FTP, port = getRandomFreePort())
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTP)
             client.connect("localhost", server.getPort())
             client.login("username", "password")
@@ -40,7 +45,7 @@ class FtpApplicationTests {
                 ConnectionType.FTPS,
                 isImplicit = true,
                 certificatePath = "src/test/resources/ftps-test-cert.jks",
-                port = Random.nextInt(1000),
+                port = getRandomFreePort(),
             )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Implicit)
             client.connect("localhost", server.getPort())
@@ -59,7 +64,7 @@ class FtpApplicationTests {
                 ConnectionType.FTPS,
                 isImplicit = false,
                 certificatePath = "src/test/resources/ftps-test-cert.jks",
-                port = Random.nextInt(1000),
+                port = getRandomFreePort(),
             )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
             client.connect("localhost", server.getPort())
