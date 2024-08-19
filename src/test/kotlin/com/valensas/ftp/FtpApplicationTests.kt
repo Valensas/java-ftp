@@ -33,7 +33,13 @@ class FtpApplicationTests {
     fun `Test ftps connection implicit`() {
         assertDoesNotThrow {
             val server = EmbeddedFtpServer()
-            server.start("username", "password", ConnectionType.FTPS, isImplicit = true, certificatePath = "src/test/resources/ftps-test-cert.jks")
+            server.start(
+                "username",
+                "password",
+                ConnectionType.FTPS,
+                isImplicit = true,
+                certificatePath = "src/test/resources/ftps-test-cert.jks",
+            )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Implicit)
             client.connect("localhost", server.getPort())
             client.login("username", "password")
@@ -45,7 +51,13 @@ class FtpApplicationTests {
     fun `Test ftps connection explicit`() {
         assertDoesNotThrow {
             val server = EmbeddedFtpServer()
-            server.start("username", "password", ConnectionType.FTPS, isImplicit = false, certificatePath = "src/test/resources/ftps-test-cert.jks")
+            server.start(
+                "username",
+                "password",
+                ConnectionType.FTPS,
+                isImplicit = false,
+                certificatePath = "src/test/resources/ftps-test-cert.jks",
+            )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
             client.connect("localhost", server.getPort())
             client.login("username", "password")
