@@ -18,11 +18,6 @@ import kotlin.test.assertTrue
 class FtpApplicationTests {
     private val ftpClientFactory = FtpClientFactory()
 
-    private fun getRandomFreePort(): Int {
-        ServerSocket(0).use { serverSocket ->
-            return serverSocket.localPort
-        }
-    }
     @Test
     fun `Test ftp connection`() {
         assertDoesNotThrow {
@@ -118,6 +113,12 @@ class FtpApplicationTests {
             assertTrue(client.isConnected)
             client.disconnect()
             server.stop()
+        }
+    }
+
+    private fun getRandomFreePort(): Int {
+        ServerSocket(0).use { serverSocket ->
+            return serverSocket.localPort
         }
     }
 }
