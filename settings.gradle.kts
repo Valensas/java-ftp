@@ -1,1 +1,1 @@
-rootProject.name = "ftp"
+rootProject.name = "java-ftp"
