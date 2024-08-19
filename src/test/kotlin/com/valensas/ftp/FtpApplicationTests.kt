@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
+import java.net.ServerSocket
 import kotlin.test.assertTrue
 
 @SpringBootTest
@@ -21,7 +22,7 @@ class FtpApplicationTests {
     fun `Test ftp connection`() {
         assertDoesNotThrow {
             val server = EmbeddedFtpServer()
-            server.start("username", "password", ConnectionType.FTP)
+            server.start("username", "password", ConnectionType.FTP, port = getRandomFreePort())
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTP)
             client.connect("localhost", server.getPort())
             client.login("username", "password")
@@ -33,7 +34,14 @@ class FtpApplicationTests {
     fun `Test ftps connection implicit`() {
         assertDoesNotThrow {
             val server = EmbeddedFtpServer()
-            server.start("username", "password", ConnectionType.FTPS, isImplicit = true, certificatePath = "src/test/resources/ftps-test-cert.jks")
+            server.start(
+                "username",
+                "password",
+                ConnectionType.FTPS,
+                isImplicit = true,
+                certificatePath = "src/test/resources/ftps-test-cert.jks",
+                port = getRandomFreePort(),
+            )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Implicit)
             client.connect("localhost", server.getPort())
             client.login("username", "password")
@@ -45,7 +53,14 @@ class FtpApplicationTests {
     fun `Test ftps connection explicit`() {
         assertDoesNotThrow {
             val server = EmbeddedFtpServer()
-            server.start("username", "password", ConnectionType.FTPS, isImplicit = false, certificatePath = "src/test/resources/ftps-test-cert.jks")
+            server.start(
+                "username",
+                "password",
+                ConnectionType.FTPS,
+                isImplicit = false,
+                certificatePath = "src/test/resources/ftps-test-cert.jks",
+                port = getRandomFreePort(),
+            )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
             client.connect("localhost", server.getPort())
             client.login("username", "password")
@@ -98,6 +113,12 @@ class FtpApplicationTests {
             assertTrue(client.isConnected)
             client.disconnect()
             server.stop()
+        }
+    }
+
+    private fun getRandomFreePort(): Int {
+        ServerSocket(0).use { serverSocket ->
+            return serverSocket.localPort
         }
     }
 }

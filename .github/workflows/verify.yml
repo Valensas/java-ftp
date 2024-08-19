@@ -1,0 +1,37 @@
+
+name: Verify
+on:
+  pull_request:
+  workflow_call:
+  push:
+    branches: [ 'main' ]
+    # Don't run on tags, publish will call this workflow
+    tags-ignore: [ '**' ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          architecture: x64
+          distribution: oracle
+          cache: 'gradle'
+      - name: Lint
+        run: ./gradlew lintKotlin
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          architecture: x64
+          distribution: oracle
+          cache: 'gradle'
+      - name: Test
+        run: ./gradlew test
