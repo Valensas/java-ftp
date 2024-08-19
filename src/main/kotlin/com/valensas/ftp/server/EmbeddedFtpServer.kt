@@ -18,16 +18,18 @@ class EmbeddedFtpServer {
         username: String,
         password: String,
         type: ConnectionType,
+        isImplicit: Boolean = false,
+        certificatePath: String = "src/test/resources/keystore.jks"
     ) {
         val serverRoot = Files.createTempDirectory("ftp-test")
         val serverFactory = FtpServerFactory()
         listenerFactory = ListenerFactory()
         if (type == ConnectionType.FTPS) {
             val ssl = SslConfigurationFactory()
-            ssl.keystoreFile = File("src/test/resources/keystore.jks")
+            ssl.keystoreFile = File(certificatePath)
             ssl.keystorePassword = password
             listenerFactory.sslConfiguration = ssl.createSslConfiguration()
-            listenerFactory.isImplicitSsl = true
+            listenerFactory.isImplicitSsl = isImplicit
         }
         listenerFactory.port = 990
         val userManagerFactory = PropertiesUserManagerFactory()
