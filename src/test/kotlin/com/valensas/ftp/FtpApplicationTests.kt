@@ -33,7 +33,7 @@ class FtpApplicationTests {
     fun `Test ftps connection`() {
         assertDoesNotThrow {
             val server = EmbeddedFtpServer()
-            server.start("username", "password", ConnectionType.FTPS, true)
+            server.start("username", "password", ConnectionType.FTPS, isImplicit = true, certificatePath = "src/test/resources/ftps-test-cert.jks")
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Implicit)
             client.connect("localhost", server.getPort())
             client.login("username", "password")

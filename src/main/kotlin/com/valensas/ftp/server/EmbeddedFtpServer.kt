@@ -7,6 +7,7 @@ import org.apache.ftpserver.listener.ListenerFactory
 import org.apache.ftpserver.ssl.SslConfigurationFactory
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory
 import org.apache.ftpserver.usermanager.impl.BaseUser
+import org.apache.sshd.server.SshServer
 import java.io.File
 import java.nio.file.Files
 
@@ -18,20 +19,23 @@ class EmbeddedFtpServer {
         username: String,
         password: String,
         type: ConnectionType,
+        port: Int = 990,
         isImplicit: Boolean = false,
-        certificatePath: String = "src/test/resources/keystore.jks"
+        certificatePath: String? = null
     ) {
         val serverRoot = Files.createTempDirectory("ftp-test")
         val serverFactory = FtpServerFactory()
         listenerFactory = ListenerFactory()
         if (type == ConnectionType.FTPS) {
             val ssl = SslConfigurationFactory()
-            ssl.keystoreFile = File(certificatePath)
+            certificatePath?.let {
+                ssl.keystoreFile = File(it)
+            }
             ssl.keystorePassword = password
             listenerFactory.sslConfiguration = ssl.createSslConfiguration()
             listenerFactory.isImplicitSsl = isImplicit
         }
-        listenerFactory.port = 990
+        listenerFactory.port = port
         val userManagerFactory = PropertiesUserManagerFactory()
         val userManager = userManagerFactory.createUserManager()
 
