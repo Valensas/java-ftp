@@ -11,11 +11,14 @@ import java.io.File
 import java.nio.file.Files
 
 class EmbeddedFtpServer {
-
     private lateinit var ftpServer: FtpServer
     private lateinit var listenerFactory: ListenerFactory
 
-    fun start(username: String, password: String, type: ConnectionType) {
+    fun start(
+        username: String,
+        password: String,
+        type: ConnectionType,
+    ) {
         val serverRoot = Files.createTempDirectory("ftp-test")
         val serverFactory = FtpServerFactory()
         listenerFactory = ListenerFactory()

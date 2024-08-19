@@ -8,5 +8,5 @@ data class ConnectionModel(
     val password: String,
     val publicKey: String?,
     val privateKey: String?,
-    val variant: ConnectionVariant?
+    val variant: ConnectionVariant?,
 )

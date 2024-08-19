@@ -7,10 +7,13 @@ import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPSClient
 
 class FtpClientFactory {
-
-    fun createFtpClient(type: ConnectionType, variant: ConnectionVariant? = null): FTPClient = when (type) {
-        ConnectionType.FTP -> FTPClient()
-        ConnectionType.FTPS -> FTPSClient(variant == ConnectionVariant.Implicit)
-        ConnectionType.SFTP -> SFTPClient()
-    }
+    fun createFtpClient(
+        type: ConnectionType,
+        variant: ConnectionVariant? = null,
+    ): FTPClient =
+        when (type) {
+            ConnectionType.FTP -> FTPClient()
+            ConnectionType.FTPS -> FTPSClient(variant == ConnectionVariant.Implicit)
+            ConnectionType.SFTP -> SFTPClient()
+        }
 }

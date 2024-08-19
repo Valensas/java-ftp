@@ -9,9 +9,7 @@ import org.slf4j.LoggerFactory
 import java.util.UUID
 
 class SFTPClient : FTPClient() {
-
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
-
 
     private lateinit var session: Session
     private lateinit var channel: Channel
@@ -19,7 +17,12 @@ class SFTPClient : FTPClient() {
     fun connect(testConnection: ConnectionModel) {
         try {
             val jSch = JSch()
-            jSch.addIdentity(UUID.randomUUID().toString(), testConnection.privateKey?.toByteArray(), testConnection.publicKey?.toByteArray(), null)
+            jSch.addIdentity(
+                UUID.randomUUID().toString(),
+                testConnection.privateKey?.toByteArray(),
+                testConnection.publicKey?.toByteArray(),
+                null,
+            )
             session = jSch.getSession(testConnection.username, testConnection.host, testConnection.port)
             session.setPassword(testConnection.password)
             session.setConfig("StrictHostKeyChecking", "no")

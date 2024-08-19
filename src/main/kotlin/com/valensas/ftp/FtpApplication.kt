@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class FtpApplication
 
 fun main(args: Array<String>) {
-	runApplication<FtpApplication>(*args)
+    runApplication<FtpApplication>(*args)
 }

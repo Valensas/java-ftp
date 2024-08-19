@@ -12,16 +12,20 @@ class EmbeddedSftpServer {
     private lateinit var sshServer: SshServer
     private lateinit var serverRoot: Path
 
-    fun start(username: String, password: String) {
+    fun start(
+        username: String,
+        password: String,
+    ) {
         serverRoot = Files.createTempDirectory("ftp-test")
         sshServer = SshServer.setUpDefaultServer()
         sshServer.keyPairProvider = setProvider()
         sshServer.subsystemFactories = listOf(SftpSubsystemFactory())
         sshServer.port = 0
         sshServer.host = "localhost"
-        sshServer.passwordAuthenticator = PasswordAuthenticator { usernameTest: String, passwordTest: String, session: ServerSession? ->
-            usernameTest == username && passwordTest == password
-        }
+        sshServer.passwordAuthenticator =
+            PasswordAuthenticator { usernameTest: String, passwordTest: String, session: ServerSession? ->
+                usernameTest == username && passwordTest == password
+            }
         sshServer.start()
     }
 
