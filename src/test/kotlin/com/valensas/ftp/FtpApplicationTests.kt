@@ -39,7 +39,7 @@ class FtpApplicationTests {
                 ConnectionType.FTPS,
                 isImplicit = true,
                 certificatePath = "src/test/resources/ftps-test-cert.jks",
-                port = 992
+                port = 992,
             )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Implicit)
             client.connect("localhost", server.getPort())
@@ -58,7 +58,7 @@ class FtpApplicationTests {
                 ConnectionType.FTPS,
                 isImplicit = false,
                 certificatePath = "src/test/resources/ftps-test-cert.jks",
-                port = 993
+                port = 993,
             )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
             client.connect("localhost", server.getPort())
