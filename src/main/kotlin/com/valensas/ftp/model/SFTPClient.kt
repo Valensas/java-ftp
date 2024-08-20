@@ -39,15 +39,14 @@ class SFTPClient : FTPClient() {
 
     override fun retrieveFileStream(remoteFileName: String): InputStream = channel.get(remoteFileName)
 
-    override fun deleteFile(remoteFileName: String): Boolean {
-        return try {
+    override fun deleteFile(remoteFileName: String): Boolean =
+        try {
             channel.rm(remoteFileName)
             true
         } catch (e: Exception) {
-            logger.error("Can not deleted ${remoteFileName}.",e)
+            logger.error("Can not deleted $remoteFileName.", e)
             false
         }
-    }
 
     fun listFilesAtPath(pathname: String): List<LsEntry> {
         val fileVector = channel.ls(pathname)
