@@ -144,6 +144,7 @@ class FtpApplicationTests {
         val files = client.listFilesAtPath(pathname)
         assertEquals(fileName, files[files.size - 1].filename)
         client.deleteFile(pathname + fileName)
+        server.stop()
     }
 
     @Test
@@ -174,6 +175,7 @@ class FtpApplicationTests {
         assertThrows<Exception> {
             client.retrieveFileStream(pathname + fileName)
         }
+        server.stop()
     }
 
     private fun getRandomFreePort(): Int {
