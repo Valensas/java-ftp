@@ -7,12 +7,17 @@ import com.valensas.ftp.model.ConnectionVariant
 import com.valensas.ftp.model.SFTPClient
 import com.valensas.ftp.server.EmbeddedFtpServer
 import com.valensas.ftp.server.EmbeddedSftpServer
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import java.net.ServerSocket
+import java.nio.file.Files
 import java.util.UUID
+import kotlin.io.path.Path
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -20,6 +25,20 @@ import kotlin.test.assertTrue
 @SpringBootTest
 class FtpApplicationTests {
     private val ftpClientFactory = FtpClientFactory()
+
+    companion object {
+        @BeforeAll
+        @JvmStatic
+        fun createDir() {
+            Files.createDirectories(Path("src/test/resources/files/"))
+        }
+
+        @AfterAll
+        @JvmStatic
+        fun cleanup() {
+            Files.deleteIfExists(Path("src/test/resources/files/"))
+        }
+    }
 
     @Test
     fun `Test ftp connection`() {
