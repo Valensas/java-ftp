@@ -55,7 +55,12 @@ class SFTPClient : FTPClient() {
         inputStream: InputStream,
         sftpPath: String,
     ) {
-        channel.put(inputStream, sftpPath)
+        try {
+            channel.put(inputStream, sftpPath)
+        } catch (e: Exception) {
+            logger.error("Error happened while uploading file", e)
+            throw e
+        }
     }
 
     override fun isConnected(): Boolean = channel.isConnected
