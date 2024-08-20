@@ -12,6 +12,9 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import java.net.ServerSocket
+import java.util.UUID
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @SpringBootTest
@@ -76,7 +79,7 @@ class FtpApplicationTests {
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.connect(
                 ConnectionModel(
-                    ConnectionType.FTPS,
+                    ConnectionType.SFTP,
                     server.getHost(),
                     server.getPort(),
                     "username",
@@ -100,7 +103,7 @@ class FtpApplicationTests {
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.connect(
                 ConnectionModel(
-                    ConnectionType.FTPS,
+                    ConnectionType.SFTP,
                     server.getHost(),
                     server.getPort(),
                     "wrongusername",
@@ -113,6 +116,63 @@ class FtpApplicationTests {
             assertTrue(client.isConnected)
             client.disconnect()
             server.stop()
+        }
+    }
+
+    @Test
+    fun `Upload and list file`() {
+        val server = EmbeddedSftpServer()
+        server.start("username", "password")
+        val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+        val fileContent = "This is a test file content."
+        val inputStream = fileContent.byteInputStream()
+        client.connect(
+            ConnectionModel(
+                ConnectionType.SFTP,
+                server.getHost(),
+                server.getPort(),
+                "username",
+                "password",
+                Fake.publicKey(),
+                Fake.privateKey(),
+                null,
+            ),
+        )
+        val pathname = "src/test/resources/files/"
+        val fileName = UUID.randomUUID().toString()
+        client.uploadFile(inputStream, pathname + fileName)
+        val files = client.listFilesAtPath(pathname)
+        assertEquals(fileName, files[files.size-1].filename)
+        client.deleteFile(pathname + fileName)
+    }
+
+    @Test
+    fun `Upload and delete file`() {
+        val server = EmbeddedSftpServer()
+        server.start("username", "password")
+        val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+        val fileContent = "This is a test file content."
+        val inputStream = fileContent.byteInputStream()
+        client.connect(
+            ConnectionModel(
+                ConnectionType.SFTP,
+                server.getHost(),
+                server.getPort(),
+                "username",
+                "password",
+                Fake.publicKey(),
+                Fake.privateKey(),
+                null,
+            ),
+        )
+        val pathname = "src/test/resources/files/"
+        val fileName = UUID.randomUUID().toString()
+        client.uploadFile(inputStream, pathname + fileName)
+        val stream = client.retrieveFileStream(pathname + fileName)
+        assertNotNull(stream)
+        client.deleteFile(pathname + fileName)
+        assertThrows<Exception> {
+            client.retrieveFileStream(pathname + fileName)
         }
     }
 
