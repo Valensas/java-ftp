@@ -8,6 +8,7 @@ import com.valensas.ftp.model.SFTPClient
 import com.valensas.ftp.server.EmbeddedFtpServer
 import com.valensas.ftp.server.EmbeddedSftpServer
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -193,6 +194,7 @@ class FtpApplicationTests {
         assertThrows<Exception> {
             client.retrieveFileStream(pathname + fileName)
         }
+        assertFalse(client.deleteFile(pathname + fileName))
         server.stop()
     }
 
