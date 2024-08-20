@@ -5,12 +5,10 @@ import com.jcraft.jsch.ChannelSftp.LsEntry
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 import org.apache.commons.net.ftp.FTPClient
-import org.apache.commons.net.ftp.FTPFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.util.UUID
-
 
 class SFTPClient : FTPClient() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -39,9 +37,7 @@ class SFTPClient : FTPClient() {
         }
     }
 
-    override fun retrieveFileStream(remoteFileName: String): InputStream {
-        return channel.get(remoteFileName)
-    }
+    override fun retrieveFileStream(remoteFileName: String): InputStream = channel.get(remoteFileName)
 
     override fun deleteFile(remoteFileName: String): Boolean {
         channel.rm(remoteFileName)
@@ -55,7 +51,10 @@ class SFTPClient : FTPClient() {
         }
     }
 
-    fun uploadFile(inputStream: InputStream, sftpPath: String) {
+    fun uploadFile(
+        inputStream: InputStream,
+        sftpPath: String,
+    ) {
         channel.put(inputStream, sftpPath)
     }
 
