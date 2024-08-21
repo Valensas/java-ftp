@@ -52,6 +52,8 @@ class SFTPClient : FTPClient() {
         val fileVector = channel.ls(pathname)
         return fileVector.map {
             it as LsEntry
+        }.filter {
+            !it.attrs.isDir
         }
     }
 
