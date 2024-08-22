@@ -50,9 +50,12 @@ class SFTPClient : FTPClient() {
 
     fun listFilesAtPath(pathname: String): List<LsEntry> {
         val fileVector = channel.ls(pathname)
-        return fileVector.map {
-            it as LsEntry
-        }
+        return fileVector
+            .map {
+                it as LsEntry
+            }.filter {
+                !it.attrs.isDir
+            }
     }
 
     fun uploadFile(
