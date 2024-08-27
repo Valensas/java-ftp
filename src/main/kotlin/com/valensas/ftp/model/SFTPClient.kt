@@ -73,7 +73,11 @@ class SFTPClient : FTPClient() {
     override fun isConnected(): Boolean = channel.isConnected
 
     override fun disconnect() {
-        session.disconnect()
-        channel.disconnect()
+        if (::session.isInitialized) {
+            session.disconnect()
+        }
+        if (::channel.isInitialized) {
+            channel.disconnect()
+        }
     }
 }
