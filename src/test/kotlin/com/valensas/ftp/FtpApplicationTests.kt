@@ -106,6 +106,8 @@ class FtpApplicationTests {
                     Fake.publicKey(),
                     Fake.privateKey(),
                     null,
+                    6000,
+                    null
                 ),
             )
             assertTrue(client.isConnected)
@@ -130,6 +132,8 @@ class FtpApplicationTests {
                     Fake.publicKey(),
                     Fake.privateKey(),
                     null,
+                    null,
+                    null
                 ),
             )
             assertTrue(client.isConnected)
@@ -155,6 +159,8 @@ class FtpApplicationTests {
                 Fake.publicKey(),
                 Fake.privateKey(),
                 null,
+                null,
+                null
             ),
         )
         val pathname = "src/test/resources/files/"
@@ -184,6 +190,8 @@ class FtpApplicationTests {
                 Fake.publicKey(),
                 Fake.privateKey(),
                 null,
+                null,
+                null
             ),
         )
         val pathname = "src/test/resources/files/"
@@ -195,7 +203,9 @@ class FtpApplicationTests {
         assertThrows<Exception> {
             client.retrieveFileStream(pathname + fileName)
         }
-        assertFalse(client.deleteFile(pathname + fileName))
+        assertThrows<Exception> {
+            client.deleteFile(pathname + fileName)
+        }
         server.stop()
     }
 
