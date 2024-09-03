@@ -9,6 +9,6 @@ data class ConnectionModel(
     val publicKey: String?,
     val privateKey: String?,
     val variant: ConnectionVariant?,
-    val connectionTimout: Int?,
+    val connectionTimeout: Int?,
     val retryCount: Int?,
 )
