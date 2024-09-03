@@ -16,7 +16,7 @@ class EmbeddedSftpServer {
         username: String,
         password: String,
         host: String = "localhost",
-        port: Int = 0
+        port: Int = 0,
     ) {
         serverRoot = Files.createTempDirectory("ftp-test")
         sshServer = SshServer.setUpDefaultServer()
