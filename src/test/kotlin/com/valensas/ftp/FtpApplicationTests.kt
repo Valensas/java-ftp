@@ -8,7 +8,6 @@ import com.valensas.ftp.model.SFTPClient
 import com.valensas.ftp.server.EmbeddedFtpServer
 import com.valensas.ftp.server.EmbeddedSftpServer
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -107,7 +106,7 @@ class FtpApplicationTests {
                     Fake.privateKey(),
                     null,
                     6000,
-                    null
+                    null,
                 ),
             )
             assertTrue(client.isConnected)
@@ -133,7 +132,7 @@ class FtpApplicationTests {
                     Fake.privateKey(),
                     null,
                     null,
-                    null
+                    null,
                 ),
             )
             assertTrue(client.isConnected)
@@ -160,7 +159,7 @@ class FtpApplicationTests {
                 Fake.privateKey(),
                 null,
                 null,
-                null
+                null,
             ),
         )
         val pathname = "src/test/resources/files/"
@@ -191,7 +190,7 @@ class FtpApplicationTests {
                 Fake.privateKey(),
                 null,
                 null,
-                null
+                null,
             ),
         )
         val pathname = "src/test/resources/files/"
