@@ -10,5 +10,5 @@ data class ConnectionModel(
     val privateKey: String?,
     val variant: ConnectionVariant?,
     val connectionTimout: Int?,
-    val retryCount: Int?
+    val retryCount: Int?,
 )
