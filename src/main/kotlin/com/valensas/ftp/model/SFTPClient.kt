@@ -26,6 +26,9 @@ class SFTPClient : FTPClient() {
                 null,
             )
             session = jSch.getSession(testConnection.username, testConnection.host, testConnection.port)
+            testConnection.connectionTimeout?.let {
+                session.timeout = it
+            }
             session.setPassword(testConnection.password)
             session.setConfig("StrictHostKeyChecking", "no")
             session.connect()
@@ -45,7 +48,7 @@ class SFTPClient : FTPClient() {
             true
         } catch (e: Exception) {
             logger.error("Can not deleted $remoteFileName.", e)
-            false
+            throw e
         }
 
     fun listFilesAtPath(pathname: String): List<LsEntry> {
