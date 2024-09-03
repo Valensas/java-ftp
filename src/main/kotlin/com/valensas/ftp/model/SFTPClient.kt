@@ -26,7 +26,7 @@ class SFTPClient : FTPClient() {
                 null,
             )
             session = jSch.getSession(testConnection.username, testConnection.host, testConnection.port)
-            testConnection.connectionTimout?.let {
+            testConnection.connectionTimeout?.let {
                 session.timeout = it
             }
             session.setPassword(testConnection.password)
