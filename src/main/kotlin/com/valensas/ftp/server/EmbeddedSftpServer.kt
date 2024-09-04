@@ -9,7 +9,6 @@ import org.apache.sshd.sftp.server.SftpSubsystemFactory
 import java.nio.file.Files
 import java.nio.file.Path
 
-
 class EmbeddedSftpServer {
     private lateinit var sshServer: SshServer
     private lateinit var serverRoot: Path

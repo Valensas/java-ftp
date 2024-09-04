@@ -5,7 +5,6 @@ import com.jcraft.jsch.ChannelSftp.LsEntry
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 import org.apache.commons.net.ftp.FTPClient
-import org.apache.commons.net.ftp.FTPFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.InputStream
