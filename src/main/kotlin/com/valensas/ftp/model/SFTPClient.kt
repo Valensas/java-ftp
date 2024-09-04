@@ -73,6 +73,16 @@ class SFTPClient : FTPClient() {
         }
     }
 
+    fun directories(): List<LsEntry> {
+        val fileVector = channel.ls(".")
+        return fileVector
+            .map {
+                it as LsEntry
+            }.filter {
+                it.attrs.isDir
+            }
+    }
+
     override fun isConnected(): Boolean = channel.isConnected
 
     override fun disconnect() {
