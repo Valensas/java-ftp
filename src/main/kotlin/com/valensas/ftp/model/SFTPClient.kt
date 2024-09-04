@@ -5,6 +5,7 @@ import com.jcraft.jsch.ChannelSftp.LsEntry
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 import org.apache.commons.net.ftp.FTPClient
+import org.apache.commons.net.ftp.FTPFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.InputStream
@@ -71,6 +72,16 @@ class SFTPClient : FTPClient() {
             logger.error("Error happened while uploading file", e)
             throw e
         }
+    }
+
+    fun directories(): List<LsEntry> {
+        val fileVector = channel.ls(".")
+        return fileVector
+            .map {
+                it as LsEntry
+            }.filter {
+                it.attrs.isDir
+            }
     }
 
     override fun isConnected(): Boolean = channel.isConnected
