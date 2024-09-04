@@ -7,16 +7,12 @@ import com.valensas.ftp.model.ConnectionVariant
 import com.valensas.ftp.model.SFTPClient
 import com.valensas.ftp.server.EmbeddedFtpServer
 import com.valensas.ftp.server.EmbeddedSftpServer
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import java.net.ServerSocket
-import java.nio.file.Files
 import java.util.UUID
-import kotlin.io.path.Path
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -180,7 +176,7 @@ class FtpApplicationTests {
         )
         val fileName = UUID.randomUUID().toString()
         client.uploadFile(inputStream, fileName)
-        val stream = client.retrieveFileStream( fileName)
+        val stream = client.retrieveFileStream(fileName)
         assertNotNull(stream)
         client.deleteFile(fileName)
         assertThrows<Exception> {
