@@ -18,7 +18,7 @@ class EmbeddedSftpServer {
         password: String,
         host: String = "localhost",
         port: Int = 0,
-        path: Path? = Files.createTempDirectory("ftp-test")
+        path: Path? = Files.createTempDirectory("ftp-test"),
     ) {
         path?.let {
             serverRoot = it
