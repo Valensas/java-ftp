@@ -20,13 +20,14 @@ class EmbeddedSftpServer {
         port: Int = 0,
         path: Path? = Files.createTempDirectory("ftp-test"),
     ) {
-        path?.let {
-            serverRoot = it
-        }
+
         sshServer = SshServer.setUpDefaultServer()
         val fileSystemFactory = VirtualFileSystemFactory()
-        fileSystemFactory.defaultHomeDir = serverRoot
-        sshServer.fileSystemFactory = fileSystemFactory
+        path?.let {
+            serverRoot = it
+            fileSystemFactory.defaultHomeDir = serverRoot
+            sshServer.fileSystemFactory = fileSystemFactory
+        }
         sshServer.keyPairProvider = setProvider()
         sshServer.subsystemFactories = listOf(SftpSubsystemFactory())
         sshServer.port = port

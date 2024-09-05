@@ -73,8 +73,8 @@ class SFTPClient : FTPClient() {
         }
     }
 
-    fun directories(): List<LsEntry> {
-        val fileVector = channel.ls(".")
+    fun directories(path: String = "."): List<LsEntry> {
+        val fileVector = channel.ls(path)
         return fileVector
             .map {
                 it as LsEntry
