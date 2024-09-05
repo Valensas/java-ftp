@@ -83,6 +83,12 @@ class SFTPClient : FTPClient() {
             }
     }
 
+    fun setTimeout(timeout: Int) {
+        if (::session.isInitialized) {
+            session.timeout = timeout
+        }
+    }
+
     override fun isConnected(): Boolean = channel.isConnected
 
     override fun disconnect() {
