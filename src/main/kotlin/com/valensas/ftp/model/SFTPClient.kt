@@ -18,18 +18,19 @@ class SFTPClient : FTPClient() {
 
     fun connect(testConnection: ConnectionModel) {
         try {
+            if(testConnection.password == null && testConnection.privateKey == null) throw Exception("Both password and private key can not be null")
             val jSch = JSch()
-            jSch.addIdentity(
-                UUID.randomUUID().toString(),
-                testConnection.privateKey?.toByteArray(),
-                testConnection.publicKey?.toByteArray(),
-                null,
-            )
+
+            testConnection.privateKey?.let {
+                jSch.addIdentity(UUID.randomUUID().toString(), it.toByteArray(), null, null)
+            }
             session = jSch.getSession(testConnection.username, testConnection.host, testConnection.port)
             testConnection.connectionTimeout?.let {
                 session.timeout = it
             }
-            session.setPassword(testConnection.password)
+            testConnection.password?.let {
+                session.setPassword(it)
+            }
             session.setConfig("StrictHostKeyChecking", "no")
             session.connect()
             channel = session.openChannel("sftp") as ChannelSftp
