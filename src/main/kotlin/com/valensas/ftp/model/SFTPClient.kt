@@ -18,7 +18,11 @@ class SFTPClient : FTPClient() {
 
     fun connect(testConnection: ConnectionModel) {
         try {
-            if(testConnection.password == null && testConnection.privateKey == null) throw Exception("Both password and private key can not be null")
+            if (testConnection.password == null &&
+                testConnection.privateKey == null
+            ) {
+                throw Exception("Both password and private key can not be null")
+            }
             val jSch = JSch()
 
             testConnection.privateKey?.let {
