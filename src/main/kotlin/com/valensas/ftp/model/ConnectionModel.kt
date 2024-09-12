@@ -6,7 +6,6 @@ data class ConnectionModel(
     val port: Int,
     val username: String,
     val password: String? = null,
-    val publicKey: String? = null,
     val privateKey: String? = null,
     val variant: ConnectionVariant? = null,
     val connectionTimeout: Int? = null,
