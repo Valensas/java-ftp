@@ -16,23 +16,23 @@ class SFTPClient : FTPClient() {
     private lateinit var session: Session
     private lateinit var channel: ChannelSftp
 
-    fun connect(testConnection: ConnectionModel) {
+    fun connect(connectionModel: ConnectionModel) {
         try {
-            if (testConnection.password == null &&
-                testConnection.privateKey == null
+            if (connectionModel.password == null &&
+                connectionModel.privateKey == null
             ) {
                 throw Exception("Both password and private key can not be null")
             }
             val jSch = JSch()
 
-            testConnection.privateKey?.let {
+            connectionModel.privateKey?.let {
                 jSch.addIdentity(UUID.randomUUID().toString(), it.toByteArray(), null, null)
             }
-            session = jSch.getSession(testConnection.username, testConnection.host, testConnection.port)
-            testConnection.connectionTimeout?.let {
+            session = jSch.getSession(connectionModel.username, connectionModel.host, connectionModel.port)
+            connectionModel.connectionTimeout?.let {
                 session.timeout = it
             }
-            testConnection.password?.let {
+            connectionModel.password?.let {
                 session.setPassword(it)
             }
             session.setConfig("StrictHostKeyChecking", "no")
