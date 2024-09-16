@@ -7,4 +7,8 @@ open class FTPClient : FTPClient() {
         this.connect(connectionModel.host, connectionModel.port)
         this.login(connectionModel.username, connectionModel.password)
     }
+
+    open fun listFilesAtPath(path: String): Any {
+        return this.listFiles(path)
+    }
 }
