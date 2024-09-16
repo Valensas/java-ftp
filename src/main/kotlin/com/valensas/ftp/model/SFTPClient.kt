@@ -4,7 +4,6 @@ import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.ChannelSftp.LsEntry
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
-import org.apache.commons.net.ftp.FTPClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.InputStream
@@ -16,7 +15,7 @@ class SFTPClient : FTPClient() {
     private lateinit var session: Session
     private lateinit var channel: ChannelSftp
 
-    fun connect(connectionModel: ConnectionModel) {
+    override fun authAndConnect(connectionModel: ConnectionModel) {
         try {
             if (connectionModel.password == null &&
                 connectionModel.privateKey == null
@@ -56,6 +55,19 @@ class SFTPClient : FTPClient() {
             throw e
         }
 
+    override fun storeFile(
+        remote: String?,
+        local: InputStream?,
+    ): Boolean {
+        try {
+            channel.put(local, remote)
+            return true
+        } catch (e: Exception) {
+            logger.error("Error happened while uploading file", e)
+            throw e
+        }
+    }
+
     fun listFilesAtPath(pathname: String): List<LsEntry> {
         val fileVector = channel.ls(pathname)
         return fileVector
@@ -64,18 +76,6 @@ class SFTPClient : FTPClient() {
             }.filter {
                 !it.attrs.isDir
             }
-    }
-
-    fun uploadFile(
-        inputStream: InputStream,
-        sftpPath: String,
-    ) {
-        try {
-            channel.put(inputStream, sftpPath)
-        } catch (e: Exception) {
-            logger.error("Error happened while uploading file", e)
-            throw e
-        }
     }
 
     fun directories(path: String = "."): List<LsEntry> {
