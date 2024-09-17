@@ -19,6 +19,7 @@ class EmbeddedFtpServer {
         username: String,
         password: String,
         type: ConnectionType,
+        host: String = "localhost",
         port: Int = 990,
         isImplicit: Boolean = false,
         certificatePath: String? = null,
@@ -32,9 +33,11 @@ class EmbeddedFtpServer {
                 ssl.keystoreFile = File(it)
             }
             ssl.keystorePassword = password
+
             listenerFactory.sslConfiguration = ssl.createSslConfiguration()
             listenerFactory.isImplicitSsl = isImplicit
         }
+        listenerFactory.serverAddress = host
         listenerFactory.port = port
         val userManagerFactory = PropertiesUserManagerFactory()
         val userManager = userManagerFactory.createUserManager()
@@ -61,4 +64,6 @@ class EmbeddedFtpServer {
     }
 
     fun getPort(): Int = listenerFactory.port
+
+    fun getHost(): String = listenerFactory.serverAddress
 }

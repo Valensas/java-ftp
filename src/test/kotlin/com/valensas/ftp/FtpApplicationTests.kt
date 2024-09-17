@@ -27,7 +27,19 @@ class FtpApplicationTests {
             val server = EmbeddedFtpServer()
             server.start("username", "password", ConnectionType.FTP, port = getRandomFreePort())
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTP)
-            client.connect("localhost", server.getPort())
+            val connectionModel =
+                ConnectionModel(
+                    ConnectionType.SFTP,
+                    "localhost",
+                    server.getPort(),
+                    "username",
+                    "password",
+                    Fake.privateKey(),
+                    null,
+                    6000,
+                    null,
+                )
+            client.authAndConnect(connectionModel)
             client.login("username", "password")
             server.stop()
         }
@@ -45,8 +57,20 @@ class FtpApplicationTests {
                 certificatePath = "src/test/resources/ftps-test-cert.jks",
                 port = getRandomFreePort(),
             )
+            val connectionModel =
+                ConnectionModel(
+                    ConnectionType.FTPS,
+                    server.getHost(),
+                    server.getPort(),
+                    "username",
+                    "password",
+                    Fake.privateKey(),
+                    null,
+                    6000,
+                    null,
+                )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Implicit)
-            client.connect("localhost", server.getPort())
+            client.authAndConnect(connectionModel)
             client.login("username", "password")
             server.stop()
         }
@@ -64,8 +88,20 @@ class FtpApplicationTests {
                 certificatePath = "src/test/resources/ftps-test-cert.jks",
                 port = getRandomFreePort(),
             )
+            val connectionModel =
+                ConnectionModel(
+                    ConnectionType.FTPS,
+                    server.getHost(),
+                    server.getPort(),
+                    "username",
+                    "password",
+                    Fake.privateKey(),
+                    null,
+                    6000,
+                    null,
+                )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
-            client.connect("localhost", server.getPort())
+            client.authAndConnect(connectionModel)
             client.login("username", "password")
             server.stop()
         }
@@ -77,7 +113,7 @@ class FtpApplicationTests {
             val server = EmbeddedSftpServer()
             server.start("username", "password")
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
-            client.connect(
+            client.authAndConnect(
                 ConnectionModel(
                     ConnectionType.SFTP,
                     server.getHost(),
@@ -102,7 +138,7 @@ class FtpApplicationTests {
             val server = EmbeddedSftpServer()
             server.start("username", "password")
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
-            client.connect(
+            client.authAndConnect(
                 ConnectionModel(
                     ConnectionType.SFTP,
                     server.getHost(),
@@ -128,7 +164,7 @@ class FtpApplicationTests {
         val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
         val fileContent = "This is a test file content."
         val inputStream = fileContent.byteInputStream()
-        client.connect(
+        client.authAndConnect(
             ConnectionModel(
                 ConnectionType.SFTP,
                 server.getHost(),
@@ -142,10 +178,10 @@ class FtpApplicationTests {
             ),
         )
         val fileName = UUID.randomUUID().toString()
-        client.uploadFile(inputStream, fileName)
-        val files = client.listFilesAtPath(".")
+        client.storeFile(fileName, inputStream)
+        val files = client.listFilesInfo(".")
         assertEquals(1, files.size)
-        assertEquals(fileName, files[0].filename)
+        assertEquals(fileName, files.keys.first())
         client.deleteFile(fileName)
         server.stop()
     }
@@ -157,7 +193,7 @@ class FtpApplicationTests {
         val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
         val fileContent = "This is a test file content."
         val inputStream = fileContent.byteInputStream()
-        client.connect(
+        client.authAndConnect(
             ConnectionModel(
                 ConnectionType.SFTP,
                 server.getHost(),
@@ -171,7 +207,7 @@ class FtpApplicationTests {
             ),
         )
         val fileName = UUID.randomUUID().toString()
-        client.uploadFile(inputStream, fileName)
+        client.storeFile(fileName, inputStream)
         val stream = client.retrieveFileStream(fileName)
         assertNotNull(stream)
         client.deleteFile(fileName)
@@ -190,7 +226,7 @@ class FtpApplicationTests {
             val server = EmbeddedSftpServer()
             server.start("username", "password")
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
-            client.connect(
+            client.authAndConnect(
                 ConnectionModel(
                     ConnectionType.SFTP,
                     server.getHost(),
