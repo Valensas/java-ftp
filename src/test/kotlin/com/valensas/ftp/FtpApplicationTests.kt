@@ -179,9 +179,9 @@ class FtpApplicationTests {
         )
         val fileName = UUID.randomUUID().toString()
         client.storeFile(fileName, inputStream)
-        val files = client.listFilesAtPath(".")
+        val files = client.listFilesInfo(".")
         assertEquals(1, files.size)
-        assertEquals(fileName, files[0].filename)
+        assertEquals(fileName, files.keys.first())
         client.deleteFile(fileName)
         server.stop()
     }

@@ -68,14 +68,12 @@ class SFTPClient : FTPClient() {
         }
     }
 
-    override fun listFilesAtPath(path: String): List<LsEntry> {
+    override fun listFilesInfo(path: String): Map<String, Long> {
         val fileVector = channel.ls(path)
         return fileVector
-            .map {
-                it as LsEntry
-            }.filter {
-                !it.attrs.isDir
-            }
+            .map { it as LsEntry }
+            .filter { !it.attrs.isDir }
+            .associate { it.filename to it.attrs.size }
     }
 
     fun directories(path: String = "."): List<LsEntry> {
