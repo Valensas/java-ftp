@@ -8,5 +8,11 @@ open class FTPClient : FTPClient() {
         this.login(connectionModel.username, connectionModel.password)
     }
 
-    open fun listFilesAtPath(path: String): Any = this.listFiles(path)
+    open fun listFilesInfo(path: String): Map<String, Long> {
+        val filesInfo =
+            this.listFiles(path).map {
+                it.name to it.size
+            }
+        return filesInfo.toMap()
+    }
 }
