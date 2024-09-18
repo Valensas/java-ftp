@@ -76,6 +76,19 @@ class SFTPClient : FTPClient() {
             .associate { it.filename to it.attrs.size }
     }
 
+    override fun completePendingCommand(): Boolean = true
+
+    override fun isConnected(): Boolean = channel.isConnected
+
+    override fun disconnect() {
+        if (::session.isInitialized) {
+            session.disconnect()
+        }
+        if (::channel.isInitialized) {
+            channel.disconnect()
+        }
+    }
+
     fun directories(path: String = "."): List<LsEntry> {
         val fileVector = channel.ls(path)
         return fileVector
@@ -89,17 +102,6 @@ class SFTPClient : FTPClient() {
     fun setTimeout(timeout: Int) {
         if (::session.isInitialized) {
             session.timeout = timeout
-        }
-    }
-
-    override fun isConnected(): Boolean = channel.isConnected
-
-    override fun disconnect() {
-        if (::session.isInitialized) {
-            session.disconnect()
-        }
-        if (::channel.isInitialized) {
-            channel.disconnect()
         }
     }
 }
