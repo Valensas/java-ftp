@@ -2,11 +2,14 @@ package com.valensas.ftp.model
 
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
+import javax.naming.AuthenticationException
 
 open class FTPClient : FTPClient() {
     open fun authAndConnect(connectionModel: ConnectionModel) {
         this.connect(connectionModel.host, connectionModel.port)
-        this.login(connectionModel.username, connectionModel.password)
+        if (!this.login(connectionModel.username, connectionModel.password)) {
+            throw AuthenticationException("Authentication failed")
+        }
         this.setFileType(FTP.BINARY_FILE_TYPE)
     }
 
