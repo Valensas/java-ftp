@@ -240,7 +240,7 @@ class FtpApplicationTests {
                 ),
             )
             assertTrue(client.isConnected)
-            assertNotNull(client.directories())
+            assertNotNull(client.listDirectories("."))
             client.disconnect()
             server.stop()
         }
