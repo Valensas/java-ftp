@@ -4,6 +4,7 @@ import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.ChannelSftp.LsEntry
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
+import org.apache.commons.net.ftp.FTPFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.InputStream
@@ -89,14 +90,16 @@ class SFTPClient : FTPClient() {
         }
     }
 
-    fun directories(path: String = "."): List<LsEntry> {
-        val fileVector = channel.ls(path)
+    override fun listDirectories(parent: String): Array<FTPFile> {
+        val fileVector = channel.ls(parent)
         return fileVector
+            .map { it as LsEntry }
+            .filter { it.attrs.isDir }
             .map {
-                it as LsEntry
-            }.filter {
-                it.attrs.isDir
-            }
+                val ftpFile = FTPFile()
+                ftpFile.name = it.filename
+                ftpFile
+            }.toTypedArray()
     }
 
     fun setTimeout(timeout: Int) {
