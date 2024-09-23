@@ -97,6 +97,9 @@ class FTPSClient(
             throw e
         }
 
+    @Throws(IOException::class)
+    override fun isConnected(): Boolean = ftpsClient.isConnected
+
     @Throws(IOException::class, SSLException::class)
     fun parseADATReply(reply: String): ByteArray = ftpsClient.parseADATReply(reply)
 
