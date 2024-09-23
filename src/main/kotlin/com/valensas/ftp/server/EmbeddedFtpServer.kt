@@ -33,7 +33,6 @@ class EmbeddedFtpServer {
                 ssl.keystoreFile = File(it)
             }
             ssl.keystorePassword = password
-
             listenerFactory.sslConfiguration = ssl.createSslConfiguration()
             listenerFactory.isImplicitSsl = isImplicit
         }
