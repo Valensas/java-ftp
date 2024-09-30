@@ -10,6 +10,9 @@ import com.valensas.ftp.server.EmbeddedSftpServer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import org.mockito.Mockito.spy
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.springframework.boot.test.context.SpringBootTest
 import java.net.ServerSocket
 import java.util.UUID
@@ -40,7 +43,6 @@ class FtpApplicationTests {
                     null,
                 )
             client.authAndConnect(connectionModel)
-            client.login("username", "password")
             server.stop()
         }
     }
@@ -71,7 +73,6 @@ class FtpApplicationTests {
                 )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Implicit)
             client.authAndConnect(connectionModel)
-            client.login("username", "password")
             server.stop()
         }
     }
@@ -102,7 +103,6 @@ class FtpApplicationTests {
                 )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
             client.authAndConnect(connectionModel)
-            client.login("username", "password")
             server.stop()
         }
     }
@@ -244,6 +244,37 @@ class FtpApplicationTests {
             client.disconnect()
             server.stop()
         }
+    }
+
+    @Test
+    fun `Test retry connection`() {
+        val server = EmbeddedFtpServer()
+        val port = getRandomFreePort()
+        server.start(
+            "username",
+            "password",
+            ConnectionType.FTPS,
+            isImplicit = false,
+            certificatePath = "src/test/resources/ftps-test-cert.jks",
+            port = port,
+        )
+        val connectionModel =
+            ConnectionModel(
+                ConnectionType.FTPS,
+                server.getHost(),
+                getRandomFreePort(),
+                "username",
+                "password",
+                Fake.privateKey(),
+                null,
+                6000,
+                null,
+            )
+        val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
+        client.retryConnectionTimeouts = listOf(1, 2, 3)
+        val spyClient = spy(client)
+        spyClient.authAndConnect(connectionModel)
+        verify(spyClient, times(4)).connectToServer(connectionModel)
     }
 
     private fun getRandomFreePort(): Int {
