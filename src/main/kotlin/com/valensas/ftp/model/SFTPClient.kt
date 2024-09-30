@@ -9,6 +9,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.util.UUID
+import javax.naming.AuthenticationException
 
 class SFTPClient : FTPClient() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -16,33 +17,28 @@ class SFTPClient : FTPClient() {
     private lateinit var session: Session
     private lateinit var channel: ChannelSftp
 
-    override fun authAndConnect(connectionModel: ConnectionModel) {
-        try {
-            if (connectionModel.password == null &&
-                connectionModel.privateKey == null
-            ) {
-                throw Exception("Both password and private key can not be null")
-            }
-            val jSch = JSch()
-
-            connectionModel.privateKey?.let {
-                jSch.addIdentity(UUID.randomUUID().toString(), it.toByteArray(), null, null)
-            }
-            session = jSch.getSession(connectionModel.username, connectionModel.host, connectionModel.port)
-            connectionModel.connectionTimeout?.let {
-                session.timeout = it
-            }
-            connectionModel.password?.let {
-                session.setPassword(it)
-            }
-            session.setConfig("StrictHostKeyChecking", "no")
-            session.connect()
-            channel = session.openChannel("sftp") as ChannelSftp
-            channel.connect()
-        } catch (e: Exception) {
-            logger.error("An error occurred while connecting to SFTP Server", e)
-            throw e
+    override fun connectToServer(connectionModel: ConnectionModel) {
+        if (connectionModel.password == null &&
+            connectionModel.privateKey == null
+        ) {
+            throw AuthenticationException("Both password and private key can not be null")
         }
+        val jSch = JSch()
+
+        connectionModel.privateKey?.let {
+            jSch.addIdentity(UUID.randomUUID().toString(), it.toByteArray(), null, null)
+        }
+        session = jSch.getSession(connectionModel.username, connectionModel.host, connectionModel.port)
+        connectionModel.connectionTimeout?.let {
+            session.timeout = it
+        }
+        connectionModel.password?.let {
+            session.setPassword(it)
+        }
+        session.setConfig("StrictHostKeyChecking", "no")
+        session.connect()
+        channel = session.openChannel("sftp") as ChannelSftp
+        channel.connect()
     }
 
     override fun retrieveFileStream(remoteFileName: String): InputStream = channel.get(remoteFileName)

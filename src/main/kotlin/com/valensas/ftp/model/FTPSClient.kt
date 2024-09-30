@@ -63,15 +63,10 @@ class FTPSClient(
     }
 
     @Throws(IOException::class, SocketException::class)
-    override fun authAndConnect(connectionModel: ConnectionModel) {
-        try {
-            with(ftpsClient) {
-                connect(connectionModel.host, connectionModel.port)
-                login(connectionModel.username, connectionModel.password)
-            }
-        } catch (e: Throwable) {
-            logger.error("An error occurred while connecting to the FTPS server", e)
-            throw e
+    override fun connectToServer(connectionModel: ConnectionModel) {
+        with(ftpsClient) {
+            connect(connectionModel.host, connectionModel.port)
+            login(connectionModel.username, connectionModel.password)
         }
     }
 
