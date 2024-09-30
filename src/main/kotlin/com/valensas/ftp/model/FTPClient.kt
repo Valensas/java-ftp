@@ -5,7 +5,6 @@ import org.apache.commons.net.ftp.FTPClient
 import javax.naming.AuthenticationException
 
 open class FTPClient : FTPClient() {
-
     private var retryConnectionTimeouts: List<Int> = listOf(0)
 
     open fun authAndConnect(connectionModel: ConnectionModel) {
@@ -35,5 +34,4 @@ open class FTPClient : FTPClient() {
             }
         return filesInfo.toMap()
     }
-
 }
