@@ -63,11 +63,11 @@ class EmbeddedSftpServer {
 
     private fun setProvider(
         algorithm: String,
-        keysize: Int,
+        keySize: Int,
     ): SimpleGeneratorHostKeyProvider {
         val provider = SimpleGeneratorHostKeyProvider()
         provider.algorithm = algorithm
-        provider.keySize = keysize
+        provider.keySize = keySize
         return provider
     }
 }
