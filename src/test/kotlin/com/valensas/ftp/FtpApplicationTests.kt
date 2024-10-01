@@ -12,8 +12,11 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import java.net.ServerSocket
+import java.security.KeyPair
 import java.security.KeyPairGenerator
+import java.security.PrivateKey
 import java.security.PublicKey
+import java.util.Base64
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -112,9 +115,9 @@ class FtpApplicationTests {
     @Test
     fun `Test sftp connection`() {
         assertDoesNotThrow {
-            val publicKey = generatePublicKey()
+            val keys = generatePublicKey()
             val server = EmbeddedSftpServer()
-            server.start("username", "password", clientPublicKey = publicKey)
+            server.start("username", null, clientPublicKey = keys.public)
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.authAndConnect(
                 ConnectionModel(
@@ -122,8 +125,8 @@ class FtpApplicationTests {
                     server.getHost(),
                     server.getPort(),
                     "username",
-                    "password",
-                    Fake.privateKey(),
+                    null,
+                    keys.private.toPEM(),
                     null,
                     6000,
                     null,
@@ -255,9 +258,14 @@ class FtpApplicationTests {
         }
     }
 
-    private fun generatePublicKey(): PublicKey {
+    private fun generatePublicKey(): KeyPair {
         val generator = KeyPairGenerator.getInstance("RSA")
         generator.initialize(2048)
-        return generator.generateKeyPair().public
+        return generator.generateKeyPair()
+    }
+
+    fun PrivateKey.toPEM(): String {
+        val base64Key = Base64.getEncoder().encodeToString(this.encoded)
+        return "-----BEGIN PRIVATE KEY-----\n${base64Key.chunked(64).joinToString("\n")}\n-----END PRIVATE KEY-----"
     }
 }
