@@ -12,6 +12,8 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import java.net.ServerSocket
+import java.security.KeyPairGenerator
+import java.security.PublicKey
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -110,8 +112,9 @@ class FtpApplicationTests {
     @Test
     fun `Test sftp connection`() {
         assertDoesNotThrow {
+            val publicKey = generatePublicKey()
             val server = EmbeddedSftpServer()
-            server.start("username", "password")
+            server.start("username", "password", clientPublicKey = publicKey)
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.authAndConnect(
                 ConnectionModel(
@@ -250,5 +253,11 @@ class FtpApplicationTests {
         ServerSocket(0).use { serverSocket ->
             return serverSocket.localPort
         }
+    }
+
+    private fun generatePublicKey(): PublicKey {
+        val generator = KeyPairGenerator.getInstance("RSA")
+        generator.initialize(2048)
+        return generator.generateKeyPair().public
     }
 }
