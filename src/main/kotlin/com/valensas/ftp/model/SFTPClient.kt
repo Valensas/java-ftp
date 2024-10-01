@@ -35,7 +35,7 @@ class SFTPClient : FTPClient() {
         connectionModel.password?.let {
             session.setPassword(it)
         }
-        session.setConfig("StrictHostKeyChecking", "no")
+        session.setConfig("StrictHostKeyChecking", connectionModel.strictHostKeyChecking)
         session.connect()
         channel = session.openChannel("sftp") as ChannelSftp
         channel.connect()
