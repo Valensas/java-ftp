@@ -13,7 +13,7 @@ open class FTPClient : FTPClient() {
     var retryConnectionTimeouts: List<Int>
         get() = _retryConnectionTimeouts
         set(value) {
-            _retryConnectionTimeouts = listOf(0) + value
+            _retryConnectionTimeouts = value
         }
 
     fun authAndConnect(connectionModel: ConnectionModel) {
