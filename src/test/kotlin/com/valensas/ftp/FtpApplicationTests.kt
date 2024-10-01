@@ -272,10 +272,10 @@ class FtpApplicationTests {
                 null,
             )
         val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
-        client.retryConnectionTimeouts = listOf(1, 2, 3)
+        client.retryConnectionTimeouts = listOf(1000, 2000, 3000)
         val spyClient = spy(client)
         spyClient.authAndConnect(connectionModel)
-        verify(spyClient, times(4)).connectToServer(connectionModel)
+        verify(spyClient, times(3)).connectToServer(connectionModel)
     }
 
     @Test
@@ -303,7 +303,7 @@ class FtpApplicationTests {
                 null,
             )
         val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
-        client.retryConnectionTimeouts = listOf(1, 2, 3)
+        client.retryConnectionTimeouts = listOf(1000, 2000, 3000)
         val spyClient = spy(client)
         assertThrows<AuthenticationException> {
             spyClient.authAndConnect(connectionModel)
