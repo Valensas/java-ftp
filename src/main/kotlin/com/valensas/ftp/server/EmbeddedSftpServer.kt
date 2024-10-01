@@ -69,6 +69,6 @@ class EmbeddedSftpServer {
     }
 
     private fun isValid(pub1: PublicKey, pub2: PublicKey): Boolean {
-        return pub1.encoded == pub2.encoded
+        return pub1 == pub2
     }
 }
