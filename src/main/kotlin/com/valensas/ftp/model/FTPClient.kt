@@ -4,30 +4,24 @@ import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.time.Duration
 import javax.naming.AuthenticationException
 
 open class FTPClient : FTPClient() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    private var _retryConnectionTimeouts: List<Int> = listOf(0)
-    var retryConnectionTimeouts: List<Int>
-        get() = _retryConnectionTimeouts
-        set(value) {
-            _retryConnectionTimeouts = value
-        }
+    var retryConnectionTimeouts: List<Long> = listOf(0)
 
     fun authAndConnect(connectionModel: ConnectionModel) {
-        run breaking@{
-            retryConnectionTimeouts.forEach {
-                try {
-                    this.connectTimeout = it
-                    connectToServer(connectionModel)
-                    return@breaking
-                } catch (e: AuthenticationException) {
-                    throw e
-                } catch (e: Throwable) {
-                    logger.error("Error connecting to server", e)
-                }
+        retryConnectionTimeouts.forEach {
+            try {
+                connectToServer(connectionModel)
+                return@authAndConnect
+            } catch (e: AuthenticationException) {
+                throw e
+            } catch (e: Throwable) {
+                logger.error("Error connecting to server", e)
+                Thread.sleep(Duration.ofMillis(it))
             }
         }
     }
