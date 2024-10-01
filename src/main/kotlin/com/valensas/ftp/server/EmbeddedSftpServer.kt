@@ -3,11 +3,13 @@ package com.valensas.ftp.server
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory
 import org.apache.sshd.server.SshServer
 import org.apache.sshd.server.auth.password.PasswordAuthenticator
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider
 import org.apache.sshd.server.session.ServerSession
 import org.apache.sshd.sftp.server.SftpSubsystemFactory
 import java.nio.file.Files
 import java.nio.file.Path
+import java.security.PublicKey
 
 class EmbeddedSftpServer {
     private lateinit var sshServer: SshServer
@@ -19,6 +21,9 @@ class EmbeddedSftpServer {
         host: String = "localhost",
         port: Int = 0,
         path: Path? = Files.createTempDirectory("ftp-test"),
+        clientPublicKey: PublicKey? = null,
+        algorithm: String = "RSA",
+        keysize: Int = 2048
     ) {
         sshServer = SshServer.setUpDefaultServer()
         val fileSystemFactory = VirtualFileSystemFactory()
@@ -27,7 +32,7 @@ class EmbeddedSftpServer {
             fileSystemFactory.defaultHomeDir = serverRoot
             sshServer.fileSystemFactory = fileSystemFactory
         }
-        sshServer.keyPairProvider = setProvider()
+        sshServer.keyPairProvider = setProvider(algorithm, keysize)
         sshServer.subsystemFactories = listOf(SftpSubsystemFactory())
         sshServer.port = port
         sshServer.host = host
@@ -35,6 +40,12 @@ class EmbeddedSftpServer {
             PasswordAuthenticator { usernameTest: String, passwordTest: String, session: ServerSession? ->
                 usernameTest == username && passwordTest == password
             }
+        clientPublicKey?.let {
+            sshServer.publickeyAuthenticator =
+                PublickeyAuthenticator { s: String, publicKey: PublicKey, serverSession: ServerSession ->
+                    publicKey == it
+                }
+        }
         sshServer.start()
     }
 
@@ -48,10 +59,10 @@ class EmbeddedSftpServer {
 
     fun getPort(): Int = sshServer.port
 
-    private fun setProvider(): SimpleGeneratorHostKeyProvider {
+    private fun setProvider(algorithm: String, keysize: Int): SimpleGeneratorHostKeyProvider {
         val provider = SimpleGeneratorHostKeyProvider()
-        provider.algorithm = "RSA"
-        provider.keySize = 2048
+        provider.algorithm = algorithm
+        provider.keySize = keysize
         return provider
     }
 }
