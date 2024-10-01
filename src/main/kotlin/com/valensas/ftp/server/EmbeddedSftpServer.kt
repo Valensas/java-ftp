@@ -23,7 +23,7 @@ class EmbeddedSftpServer {
         path: Path? = Files.createTempDirectory("ftp-test"),
         clientPublicKey: PublicKey? = null,
         algorithm: String = "RSA",
-        keysize: Int = 2048,
+        keySize: Int = 2048,
     ) {
         sshServer = SshServer.setUpDefaultServer()
         val fileSystemFactory = VirtualFileSystemFactory()
@@ -38,11 +38,11 @@ class EmbeddedSftpServer {
                     publicKey == clientPublicKey
                 }
         }
-        sshServer.keyPairProvider = setProvider(algorithm, keysize)
+        sshServer.keyPairProvider = setProvider(algorithm, keySize)
         sshServer.subsystemFactories = listOf(SftpSubsystemFactory())
         sshServer.port = port
         sshServer.host = host
-        password.let {
+        password?.let {
             sshServer.passwordAuthenticator =
                 PasswordAuthenticator { usernameTest: String, passwordTest: String, session: ServerSession? ->
                     usernameTest == username && passwordTest == password
