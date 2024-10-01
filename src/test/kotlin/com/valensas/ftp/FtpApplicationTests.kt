@@ -16,6 +16,7 @@ import org.mockito.Mockito.verify
 import org.springframework.boot.test.context.SpringBootTest
 import java.net.ServerSocket
 import java.util.UUID
+import javax.naming.AuthenticationException
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -275,6 +276,39 @@ class FtpApplicationTests {
         val spyClient = spy(client)
         spyClient.authAndConnect(connectionModel)
         verify(spyClient, times(4)).connectToServer(connectionModel)
+    }
+
+    @Test
+    fun `Retry connection should not handle authentication exception`() {
+        val server = EmbeddedFtpServer()
+        val port = getRandomFreePort()
+        server.start(
+            "username",
+            "password",
+            ConnectionType.FTPS,
+            isImplicit = false,
+            certificatePath = "src/test/resources/ftps-test-cert.jks",
+            port = port,
+        )
+        val connectionModel =
+            ConnectionModel(
+                ConnectionType.FTPS,
+                server.getHost(),
+                server.getPort(),
+                "wrongusername",
+                "wrongpassword",
+                Fake.privateKey(),
+                null,
+                6000,
+                null,
+            )
+        val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
+        client.retryConnectionTimeouts = listOf(1, 2, 3)
+        val spyClient = spy(client)
+        assertThrows<AuthenticationException> {
+            spyClient.authAndConnect(connectionModel)
+        }
+        verify(spyClient, times(1)).connectToServer(connectionModel)
     }
 
     private fun getRandomFreePort(): Int {
