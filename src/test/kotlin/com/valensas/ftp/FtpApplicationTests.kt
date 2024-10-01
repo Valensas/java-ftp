@@ -15,7 +15,6 @@ import java.net.ServerSocket
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.PrivateKey
-import java.security.PublicKey
 import java.util.Base64
 import java.util.UUID
 import kotlin.test.assertEquals
@@ -135,6 +134,31 @@ class FtpApplicationTests {
             assertTrue(client.isConnected)
             client.disconnect()
             server.stop()
+        }
+    }
+
+    @Test
+    fun `Can not connect to sftp with invalid private key`() {
+        assertDoesNotThrow {
+            val keys = generatePublicKey()
+            val server = EmbeddedSftpServer()
+            server.start("username", null, clientPublicKey = keys.public)
+            val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+            assertThrows<Exception> {
+                client.authAndConnect(
+                    ConnectionModel(
+                        ConnectionType.SFTP,
+                        server.getHost(),
+                        server.getPort(),
+                        "username",
+                        null,
+                        Fake.privateKey(),
+                        null,
+                        6000,
+                        null,
+                    ),
+                )
+            }
         }
     }
 

@@ -3,7 +3,6 @@ package com.valensas.ftp.server
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory
 import org.apache.sshd.server.SshServer
 import org.apache.sshd.server.auth.password.PasswordAuthenticator
-import org.apache.sshd.server.auth.pubkey.KeySetPublickeyAuthenticator
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider
 import org.apache.sshd.server.session.ServerSession
@@ -24,7 +23,7 @@ class EmbeddedSftpServer {
         path: Path? = Files.createTempDirectory("ftp-test"),
         clientPublicKey: PublicKey? = null,
         algorithm: String = "RSA",
-        keysize: Int = 2048
+        keysize: Int = 2048,
     ) {
         sshServer = SshServer.setUpDefaultServer()
         val fileSystemFactory = VirtualFileSystemFactory()
@@ -34,9 +33,10 @@ class EmbeddedSftpServer {
             sshServer.fileSystemFactory = fileSystemFactory
         }
         clientPublicKey?.let {
-            sshServer.publickeyAuthenticator = PublickeyAuthenticator { usernameTest, publicKey, serverSession ->
-                isValid(publicKey, clientPublicKey)
-            }
+            sshServer.publickeyAuthenticator =
+                PublickeyAuthenticator { usernameTest, publicKey, serverSession ->
+                    publicKey == clientPublicKey
+                }
         }
         sshServer.keyPairProvider = setProvider(algorithm, keysize)
         sshServer.subsystemFactories = listOf(SftpSubsystemFactory())
@@ -61,14 +61,13 @@ class EmbeddedSftpServer {
 
     fun getPort(): Int = sshServer.port
 
-    private fun setProvider(algorithm: String, keysize: Int): SimpleGeneratorHostKeyProvider {
+    private fun setProvider(
+        algorithm: String,
+        keysize: Int,
+    ): SimpleGeneratorHostKeyProvider {
         val provider = SimpleGeneratorHostKeyProvider()
         provider.algorithm = algorithm
         provider.keySize = keysize
         return provider
-    }
-
-    private fun isValid(pub1: PublicKey, pub2: PublicKey): Boolean {
-        return pub1 == pub2
     }
 }
