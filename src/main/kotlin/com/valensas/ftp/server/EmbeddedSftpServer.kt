@@ -3,6 +3,7 @@ package com.valensas.ftp.server
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory
 import org.apache.sshd.server.SshServer
 import org.apache.sshd.server.auth.password.PasswordAuthenticator
+import org.apache.sshd.server.auth.pubkey.KeySetPublickeyAuthenticator
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider
 import org.apache.sshd.server.session.ServerSession
@@ -32,6 +33,11 @@ class EmbeddedSftpServer {
             fileSystemFactory.defaultHomeDir = serverRoot
             sshServer.fileSystemFactory = fileSystemFactory
         }
+        clientPublicKey?.let {
+            sshServer.publickeyAuthenticator = PublickeyAuthenticator { usernameTest, publicKey, serverSession ->
+                isValid(publicKey, clientPublicKey)
+            }
+        }
         sshServer.keyPairProvider = setProvider(algorithm, keysize)
         sshServer.subsystemFactories = listOf(SftpSubsystemFactory())
         sshServer.port = port
@@ -40,12 +46,6 @@ class EmbeddedSftpServer {
             PasswordAuthenticator { usernameTest: String, passwordTest: String, session: ServerSession? ->
                 usernameTest == username && passwordTest == password
             }
-        clientPublicKey?.let {
-            sshServer.publickeyAuthenticator =
-                PublickeyAuthenticator { s: String, publicKey: PublicKey, serverSession: ServerSession ->
-                    publicKey == it
-                }
-        }
         sshServer.start()
     }
 
@@ -64,5 +64,9 @@ class EmbeddedSftpServer {
         provider.algorithm = algorithm
         provider.keySize = keysize
         return provider
+    }
+
+    private fun isValid(pub1: PublicKey, pub2: PublicKey): Boolean {
+        return pub1.encoded == pub2.encoded
     }
 }
