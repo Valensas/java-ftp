@@ -10,4 +10,5 @@ data class ConnectionModel(
     val variant: ConnectionVariant? = null,
     val connectionTimeout: Int? = null,
     val retryCount: Int? = null,
+    val strictHostKeyChecking: String = "no",
 )
