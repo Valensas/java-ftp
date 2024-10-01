@@ -20,7 +20,7 @@ open class FTPClient : FTPClient() {
         run breaking@{
             retryConnectionTimeouts.forEach {
                 try {
-                    this.defaultTimeout = it
+                    this.connectTimeout = it
                     connectToServer(connectionModel)
                     return@breaking
                 } catch (e: AuthenticationException) {
