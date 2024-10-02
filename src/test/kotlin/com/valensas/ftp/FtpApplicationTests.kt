@@ -12,6 +12,10 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import java.net.ServerSocket
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.security.PrivateKey
+import java.util.Base64
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -110,8 +114,9 @@ class FtpApplicationTests {
     @Test
     fun `Test sftp connection`() {
         assertDoesNotThrow {
+            val keys = generatePublicKey()
             val server = EmbeddedSftpServer()
-            server.start("username", "password")
+            server.start("username", null, clientPublicKey = keys.public)
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.authAndConnect(
                 ConnectionModel(
@@ -119,8 +124,8 @@ class FtpApplicationTests {
                     server.getHost(),
                     server.getPort(),
                     "username",
-                    "password",
-                    Fake.privateKey(),
+                    null,
+                    keys.private.toPEM(),
                     null,
                     6000,
                     null,
@@ -129,6 +134,31 @@ class FtpApplicationTests {
             assertTrue(client.isConnected)
             client.disconnect()
             server.stop()
+        }
+    }
+
+    @Test
+    fun `Can not connect to sftp with invalid private key`() {
+        assertDoesNotThrow {
+            val keys = generatePublicKey()
+            val server = EmbeddedSftpServer()
+            server.start("username", null, clientPublicKey = keys.public)
+            val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+            assertThrows<Exception> {
+                client.authAndConnect(
+                    ConnectionModel(
+                        ConnectionType.SFTP,
+                        server.getHost(),
+                        server.getPort(),
+                        "username",
+                        null,
+                        Fake.privateKey(),
+                        null,
+                        6000,
+                        null,
+                    ),
+                )
+            }
         }
     }
 
@@ -250,5 +280,16 @@ class FtpApplicationTests {
         ServerSocket(0).use { serverSocket ->
             return serverSocket.localPort
         }
+    }
+
+    private fun generatePublicKey(): KeyPair {
+        val generator = KeyPairGenerator.getInstance("RSA")
+        generator.initialize(2048)
+        return generator.generateKeyPair()
+    }
+
+    fun PrivateKey.toPEM(): String {
+        val base64Key = Base64.getEncoder().encodeToString(this.encoded)
+        return "-----BEGIN PRIVATE KEY-----\n${base64Key.chunked(64).joinToString("\n")}\n-----END PRIVATE KEY-----"
     }
 }
