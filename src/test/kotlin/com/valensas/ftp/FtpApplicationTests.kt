@@ -304,7 +304,9 @@ class FtpApplicationTests {
         val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
         client.retryBackoffDurations = listOf(1000, 2000, 3000)
         val spyClient = spy(client)
-        spyClient.authAndConnect(connectionModel)
+        assertThrows<Throwable> {
+            spyClient.authAndConnect(connectionModel)
+        }
         verify(spyClient, times(3)).connectToServer(connectionModel)
     }
 
