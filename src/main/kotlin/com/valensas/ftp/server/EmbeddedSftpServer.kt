@@ -3,11 +3,13 @@ package com.valensas.ftp.server
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory
 import org.apache.sshd.server.SshServer
 import org.apache.sshd.server.auth.password.PasswordAuthenticator
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider
 import org.apache.sshd.server.session.ServerSession
 import org.apache.sshd.sftp.server.SftpSubsystemFactory
 import java.nio.file.Files
 import java.nio.file.Path
+import java.security.PublicKey
 
 class EmbeddedSftpServer {
     private lateinit var sshServer: SshServer
@@ -15,10 +17,13 @@ class EmbeddedSftpServer {
 
     fun start(
         username: String,
-        password: String,
+        password: String? = null,
         host: String = "localhost",
         port: Int = 0,
         path: Path? = Files.createTempDirectory("ftp-test"),
+        clientPublicKey: PublicKey? = null,
+        algorithm: String = "RSA",
+        keySize: Int = 2048,
     ) {
         sshServer = SshServer.setUpDefaultServer()
         val fileSystemFactory = VirtualFileSystemFactory()
@@ -27,14 +32,22 @@ class EmbeddedSftpServer {
             fileSystemFactory.defaultHomeDir = serverRoot
             sshServer.fileSystemFactory = fileSystemFactory
         }
-        sshServer.keyPairProvider = setProvider()
+        clientPublicKey?.let {
+            sshServer.publickeyAuthenticator =
+                PublickeyAuthenticator { usernameTest, publicKey, serverSession ->
+                    publicKey == clientPublicKey
+                }
+        }
+        sshServer.keyPairProvider = setProvider(algorithm, keySize)
         sshServer.subsystemFactories = listOf(SftpSubsystemFactory())
         sshServer.port = port
         sshServer.host = host
-        sshServer.passwordAuthenticator =
-            PasswordAuthenticator { usernameTest: String, passwordTest: String, session: ServerSession? ->
-                usernameTest == username && passwordTest == password
-            }
+        password?.let {
+            sshServer.passwordAuthenticator =
+                PasswordAuthenticator { usernameTest: String, passwordTest: String, session: ServerSession? ->
+                    usernameTest == username && passwordTest == password
+                }
+        }
         sshServer.start()
     }
 
@@ -48,10 +61,13 @@ class EmbeddedSftpServer {
 
     fun getPort(): Int = sshServer.port
 
-    private fun setProvider(): SimpleGeneratorHostKeyProvider {
+    private fun setProvider(
+        algorithm: String,
+        keySize: Int,
+    ): SimpleGeneratorHostKeyProvider {
         val provider = SimpleGeneratorHostKeyProvider()
-        provider.algorithm = "RSA"
-        provider.keySize = 2048
+        provider.algorithm = algorithm
+        provider.keySize = keySize
         return provider
     }
 }
