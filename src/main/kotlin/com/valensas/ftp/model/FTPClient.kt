@@ -13,6 +13,7 @@ open class FTPClient : FTPClient() {
     var retryBackoffDurations: List<Long> = listOf(0)
 
     fun authAndConnect(connectionModel: ConnectionModel) {
+        var throwableOnFail: Throwable? = null
         retryBackoffDurations.forEach {
             try {
                 connectToServer(connectionModel)
@@ -20,10 +21,12 @@ open class FTPClient : FTPClient() {
             } catch (e: AuthenticationException) {
                 throw e
             } catch (e: Throwable) {
+                throwableOnFail = e
                 logger.error("Error connecting to server", e)
                 Thread.sleep(Duration.ofMillis(it))
             }
         }
+        throwableOnFail?.let { throw it }
     }
 
     open fun listFilesInfo(path: String): Map<String, Long> {
