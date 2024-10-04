@@ -10,10 +10,10 @@ import javax.naming.AuthenticationException
 open class FTPClient : FTPClient() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    var retryConnectionTimeouts: List<Long> = listOf(0)
+    var retryBackoffDurations: List<Long> = listOf(0)
 
     fun authAndConnect(connectionModel: ConnectionModel) {
-        retryConnectionTimeouts.forEach {
+        retryBackoffDurations.forEach {
             try {
                 connectToServer(connectionModel)
                 return@authAndConnect
