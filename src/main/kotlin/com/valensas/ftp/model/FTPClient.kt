@@ -2,15 +2,31 @@ package com.valensas.ftp.model
 
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import java.time.Duration
 import javax.naming.AuthenticationException
 
 open class FTPClient : FTPClient() {
-    open fun authAndConnect(connectionModel: ConnectionModel) {
-        this.connect(connectionModel.host, connectionModel.port)
-        if (!this.login(connectionModel.username, connectionModel.password)) {
-            throw AuthenticationException("Authentication failed")
+    private val logger: Logger = LoggerFactory.getLogger(javaClass)
+
+    var retryBackoffDurations: List<Long> = listOf(0)
+
+    fun authAndConnect(connectionModel: ConnectionModel) {
+        var throwableOnFail: Throwable? = null
+        retryBackoffDurations.forEach {
+            try {
+                connectToServer(connectionModel)
+                return@authAndConnect
+            } catch (e: AuthenticationException) {
+                throw e
+            } catch (e: Throwable) {
+                throwableOnFail = e
+                logger.error("Error connecting to server", e)
+                Thread.sleep(Duration.ofMillis(it))
+            }
         }
-        this.setFileType(FTP.BINARY_FILE_TYPE)
+        throwableOnFail?.let { throw it }
     }
 
     open fun listFilesInfo(path: String): Map<String, Long> {
@@ -19,5 +35,13 @@ open class FTPClient : FTPClient() {
                 it.name to it.size
             }
         return filesInfo.toMap()
+    }
+
+    open fun connectToServer(connectionModel: ConnectionModel) {
+        this.connect(connectionModel.host, connectionModel.port)
+        if (!this.login(connectionModel.username, connectionModel.password)) {
+            throw AuthenticationException("Authentication failed")
+        }
+        this.setFileType(FTP.BINARY_FILE_TYPE)
     }
 }
