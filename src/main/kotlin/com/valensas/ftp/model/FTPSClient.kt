@@ -5,6 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.net.SocketException
+import javax.naming.AuthenticationException
 import javax.net.ssl.KeyManager
 import javax.net.ssl.SSLException
 import javax.net.ssl.TrustManager
@@ -63,15 +64,12 @@ class FTPSClient(
     }
 
     @Throws(IOException::class, SocketException::class)
-    override fun authAndConnect(connectionModel: ConnectionModel) {
-        try {
-            with(ftpsClient) {
-                connect(connectionModel.host, connectionModel.port)
-                login(connectionModel.username, connectionModel.password)
+    override fun connectToServer(connectionModel: ConnectionModel) {
+        with(ftpsClient) {
+            connect(connectionModel.host, connectionModel.port)
+            if (!login(connectionModel.username, connectionModel.password)) {
+                throw AuthenticationException("Authentication failed")
             }
-        } catch (e: Throwable) {
-            logger.error("An error occurred while connecting to the FTPS server", e)
-            throw e
         }
     }
 
