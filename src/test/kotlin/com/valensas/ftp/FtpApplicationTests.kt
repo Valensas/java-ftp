@@ -113,11 +113,11 @@ class FtpApplicationTests {
     }
 
     @Test
-    fun `Test sftp connection`() {
+    fun `Test sftp connection with RSA`() {
         assertDoesNotThrow {
             val keys = generatePublicKey()
             val server = EmbeddedSftpServer()
-            server.start("username", null, clientPublicKey = keys.public)
+            server.start("username", null, clientPublicKey = keys.public, algorithm = "RSA")
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.authAndConnect(
                 ConnectionModel(
@@ -126,7 +126,59 @@ class FtpApplicationTests {
                     server.getPort(),
                     "username",
                     null,
-                    keys.private.toPEM(),
+                    privateKey = keys.private.toPEM(),
+                    null,
+                    6000,
+                    null,
+                ),
+            )
+            assertTrue(client.isConnected)
+            client.disconnect()
+            server.stop()
+        }
+    }
+
+    @Test
+    fun `Test sftp connection with DSA`() {
+        assertDoesNotThrow {
+            val keys = generatePublicKey(keySize = 1024, algorithm = "DSA")
+            val server = EmbeddedSftpServer()
+            server.start("username", null, clientPublicKey = keys.public, algorithm = "DSA", keySize = 1024)
+            val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+            client.authAndConnect(
+                ConnectionModel(
+                    ConnectionType.SFTP,
+                    server.getHost(),
+                    server.getPort(),
+                    "username",
+                    null,
+                    privateKey = keys.private.toPEM(),
+                    null,
+                    6000,
+                    null,
+                ),
+            )
+            assertTrue(client.isConnected)
+            client.disconnect()
+            server.stop()
+        }
+    }
+
+    @Test
+    fun `Test should fail when sftp connection with DSA with key size greater than 1024`() {
+        assertThrows<Exception> {
+            val keys = generatePublicKey(keySize = 2048, algorithm = "DSA")
+            val server = EmbeddedSftpServer()
+            server.start("username", null, clientPublicKey = keys.public, algorithm = "DSA", keySize = 2048)
+            val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+            client.authAndConnect(
+                ConnectionModel(
+                    ConnectionType.SFTP,
+                    server.getHost(),
+                    server.getPort(),
+                    "username",
+                    null,
+                    privateKey = keys.private.toPEM(),
                     null,
                     6000,
                     null,
@@ -349,9 +401,12 @@ class FtpApplicationTests {
         }
     }
 
-    private fun generatePublicKey(): KeyPair {
-        val generator = KeyPairGenerator.getInstance("RSA")
-        generator.initialize(2048)
+    private fun generatePublicKey(
+        keySize: Int = 2048,
+        algorithm: String = "RSA",
+    ): KeyPair {
+        val generator = KeyPairGenerator.getInstance(algorithm)
+        generator.initialize(keySize)
         return generator.generateKeyPair()
     }
 
