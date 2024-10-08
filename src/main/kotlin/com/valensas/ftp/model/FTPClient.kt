@@ -23,7 +23,7 @@ open class FTPClient : FTPClient() {
             } catch (e: Throwable) {
                 throwableOnFail = e
                 logger.error("Error connecting to server", e)
-                Thread.sleep(Duration.ofMillis(it))
+                Thread.sleep(Duration.ofMillis(it).toSeconds())
             }
         }
         throwableOnFail?.let { throw it }

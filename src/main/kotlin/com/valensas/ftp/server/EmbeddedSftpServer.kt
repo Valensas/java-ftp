@@ -1,6 +1,8 @@
 package com.valensas.ftp.server
 
+import org.apache.sshd.common.config.keys.KeyUtils
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory
+import org.apache.sshd.common.signature.BuiltinSignatures
 import org.apache.sshd.server.SshServer
 import org.apache.sshd.server.auth.password.PasswordAuthenticator
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator
@@ -10,6 +12,8 @@ import org.apache.sshd.sftp.server.SftpSubsystemFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import java.security.PublicKey
+import java.security.interfaces.DSAPublicKey
+import java.security.interfaces.RSAPublicKey
 
 class EmbeddedSftpServer {
     private lateinit var sshServer: SshServer
@@ -32,10 +36,15 @@ class EmbeddedSftpServer {
             fileSystemFactory.defaultHomeDir = serverRoot
             sshServer.fileSystemFactory = fileSystemFactory
         }
+        sshServer.signatureFactories.add(BuiltinSignatures.dsa)
         clientPublicKey?.let {
             sshServer.publickeyAuthenticator =
                 PublickeyAuthenticator { usernameTest, publicKey, serverSession ->
-                    publicKey == clientPublicKey
+                    when (algorithm) {
+                        "RSA" -> KeyUtils.compareRSAKeys(publicKey as RSAPublicKey, clientPublicKey as RSAPublicKey)
+                        "DSA" -> KeyUtils.compareDSAKeys(publicKey as DSAPublicKey, clientPublicKey as DSAPublicKey)
+                        else -> false
+                    }
                 }
         }
         sshServer.keyPairProvider = setProvider(algorithm, keySize)
