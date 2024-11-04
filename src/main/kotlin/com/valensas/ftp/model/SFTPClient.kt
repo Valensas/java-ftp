@@ -9,7 +9,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.util.UUID
-import javax.naming.AuthenticationException
 
 class SFTPClient : FTPClient() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -18,11 +17,6 @@ class SFTPClient : FTPClient() {
     private lateinit var channel: ChannelSftp
 
     override fun connectToServer(connectionModel: ConnectionModel) {
-        if (connectionModel.password == null &&
-            connectionModel.privateKey == null
-        ) {
-            throw AuthenticationException("Both password and private key can not be null")
-        }
         val jSch = JSch()
 
         connectionModel.privateKey?.let {
