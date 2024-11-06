@@ -47,7 +47,6 @@ class FtpApplicationTests {
                     null,
                     ConnectionMode.Passive,
                     6000,
-                    retryCount = null,
                 )
             client.authAndConnect(connectionModel)
             server.stop()
@@ -77,7 +76,6 @@ class FtpApplicationTests {
                     null,
                     ConnectionMode.Passive,
                     6000,
-                    retryCount = null,
                 )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Implicit)
             client.authAndConnect(connectionModel)
@@ -108,7 +106,6 @@ class FtpApplicationTests {
                     null,
                     ConnectionMode.Passive,
                     6000,
-                    retryCount = null,
                 )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
             client.authAndConnect(connectionModel)
@@ -134,7 +131,6 @@ class FtpApplicationTests {
                     null,
                     ConnectionMode.Passive,
                     6000,
-                    retryCount = null,
                 ),
             )
             assertTrue(client.isConnected)
@@ -161,7 +157,6 @@ class FtpApplicationTests {
                     null,
                     ConnectionMode.Passive,
                     6000,
-                    retryCount = null,
                 ),
             )
             assertTrue(client.isConnected)
@@ -188,7 +183,6 @@ class FtpApplicationTests {
                     null,
                     ConnectionMode.Passive,
                     6000,
-                    retryCount = null,
                 ),
             )
             assertTrue(client.isConnected)
@@ -216,7 +210,6 @@ class FtpApplicationTests {
                         null,
                         ConnectionMode.Passive,
                         6000,
-                        retryCount = null,
                     ),
                 )
             }
@@ -240,7 +233,6 @@ class FtpApplicationTests {
                     null,
                     null,
                     6000,
-                    retryCount = null,
                 ),
             )
             assertTrue(client.isConnected)
@@ -267,7 +259,6 @@ class FtpApplicationTests {
                 null,
                 null,
                 6000,
-                retryCount = null,
             ),
         )
         val fileName = UUID.randomUUID().toString()
@@ -297,7 +288,6 @@ class FtpApplicationTests {
                 null,
                 null,
                 6000,
-                retryCount = null,
             ),
         )
         val fileName = UUID.randomUUID().toString()
@@ -331,7 +321,6 @@ class FtpApplicationTests {
                     null,
                     ConnectionMode.Passive,
                     6000,
-                    retryCount = null,
                 ),
             )
             assertTrue(client.isConnected)
@@ -364,7 +353,6 @@ class FtpApplicationTests {
                 null,
                 ConnectionMode.Passive,
                 6000,
-                retryCount = null,
             )
         val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
         client.retryBackoffDurations = listOf(1000, 2000, 3000)
@@ -398,7 +386,6 @@ class FtpApplicationTests {
                 null,
                 ConnectionMode.Passive,
                 6000,
-                retryCount = null,
             )
         val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
         client.retryBackoffDurations = listOf(1000, 2000, 3000)
