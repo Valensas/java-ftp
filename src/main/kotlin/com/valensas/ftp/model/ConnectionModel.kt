@@ -8,6 +8,7 @@ data class ConnectionModel(
     val password: String? = null,
     val privateKey: String? = null,
     val variant: ConnectionVariant? = null,
+    val connectionMode: ConnectionMode? = null,
     val connectionTimeout: Int? = null,
     val retryCount: Int? = null,
     val strictHostKeyChecking: String = "no",
