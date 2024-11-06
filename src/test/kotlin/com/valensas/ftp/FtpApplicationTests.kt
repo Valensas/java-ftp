@@ -1,10 +1,7 @@
 package com.valensas.ftp
 
 import com.valensas.ftp.factory.FtpClientFactory
-import com.valensas.ftp.model.ConnectionModel
-import com.valensas.ftp.model.ConnectionType
-import com.valensas.ftp.model.ConnectionVariant
-import com.valensas.ftp.model.SFTPClient
+import com.valensas.ftp.model.*
 import com.valensas.ftp.server.EmbeddedFtpServer
 import com.valensas.ftp.server.EmbeddedSftpServer
 import org.junit.jupiter.api.Test
@@ -44,7 +41,7 @@ class FtpApplicationTests {
                     "password",
                     Fake.privateKey(),
                     null,
-                    6000,
+                    ConnectionMode.Inactive,
                     null,
                 )
             client.authAndConnect(connectionModel)
@@ -73,7 +70,7 @@ class FtpApplicationTests {
                     "password",
                     Fake.privateKey(),
                     null,
-                    6000,
+                    ConnectionMode.Inactive,
                     null,
                 )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Implicit)
@@ -103,7 +100,7 @@ class FtpApplicationTests {
                     "password",
                     Fake.privateKey(),
                     null,
-                    6000,
+                    ConnectionMode.Inactive,
                     null,
                 )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
@@ -128,7 +125,7 @@ class FtpApplicationTests {
                     null,
                     privateKey = keys.private.toPEM(),
                     null,
-                    6000,
+                    ConnectionMode.Inactive,
                     null,
                 ),
             )
@@ -154,7 +151,7 @@ class FtpApplicationTests {
                     null,
                     privateKey = keys.private.toPEM(),
                     null,
-                    6000,
+                    ConnectionMode.Inactive,
                     null,
                 ),
             )
@@ -180,7 +177,7 @@ class FtpApplicationTests {
                     null,
                     privateKey = keys.private.toPEM(),
                     null,
-                    6000,
+                    ConnectionMode.Inactive,
                     null,
                 ),
             )
@@ -207,7 +204,7 @@ class FtpApplicationTests {
                         null,
                         Fake.privateKey(),
                         null,
-                        6000,
+                        ConnectionMode.Inactive,
                         null,
                     ),
                 )
@@ -318,7 +315,7 @@ class FtpApplicationTests {
                     "password",
                     Fake.privateKey(),
                     null,
-                    6000,
+                    ConnectionMode.Inactive,
                     null,
                 ),
             )
@@ -350,7 +347,7 @@ class FtpApplicationTests {
                 "password",
                 Fake.privateKey(),
                 null,
-                6000,
+                ConnectionMode.Inactive,
                 null,
             )
         val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
@@ -383,7 +380,7 @@ class FtpApplicationTests {
                 "wrongpassword",
                 Fake.privateKey(),
                 null,
-                6000,
+                ConnectionMode.Inactive,
                 null,
             )
         val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
