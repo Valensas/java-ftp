@@ -1,7 +1,11 @@
 package com.valensas.ftp
 
 import com.valensas.ftp.factory.FtpClientFactory
-import com.valensas.ftp.model.*
+import com.valensas.ftp.model.ConnectionMode
+import com.valensas.ftp.model.ConnectionModel
+import com.valensas.ftp.model.ConnectionType
+import com.valensas.ftp.model.ConnectionVariant
+import com.valensas.ftp.model.SFTPClient
 import com.valensas.ftp.server.EmbeddedFtpServer
 import com.valensas.ftp.server.EmbeddedSftpServer
 import org.junit.jupiter.api.Test
