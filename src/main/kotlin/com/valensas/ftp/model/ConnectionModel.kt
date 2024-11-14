@@ -12,4 +12,5 @@ data class ConnectionModel(
     val connectionTimeout: Int? = null,
     val retryCount: Int? = null,
     val strictHostKeyChecking: String = "no",
+    val retryBackoffDurationsInSecond: List<Int> = listOf(0),
 )
