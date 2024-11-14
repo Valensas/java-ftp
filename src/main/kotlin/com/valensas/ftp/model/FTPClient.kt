@@ -10,11 +10,9 @@ import javax.naming.AuthenticationException
 open class FTPClient : FTPClient() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    var retryBackoffDurations: List<Long> = listOf(0)
-
     fun authAndConnect(connectionModel: ConnectionModel) {
         var throwableOnFail: Throwable? = null
-        retryBackoffDurations.forEach {
+        connectionModel.retryBackoffDurationsInSecond.forEach {
             try {
                 connectToServer(connectionModel)
                 return@authAndConnect
@@ -23,7 +21,7 @@ open class FTPClient : FTPClient() {
             } catch (e: Throwable) {
                 throwableOnFail = e
                 logger.error("Error connecting to server", e)
-                Thread.sleep(Duration.ofMillis(it).toSeconds())
+                Thread.sleep(Duration.ofMillis(it.toLong()).toSeconds())
             }
         }
         throwableOnFail?.let { throw it }
