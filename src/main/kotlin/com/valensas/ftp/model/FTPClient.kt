@@ -10,21 +10,37 @@ import javax.naming.AuthenticationException
 open class FTPClient : FTPClient() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    fun authAndConnect(connectionModel: ConnectionModel) {
+    fun authAndConnect(connectionModel: ConnectionModel): ConnectionResult {
         var throwableOnFail: Throwable? = null
-        connectionModel.retryBackoffDurationsInSecond.forEach {
+
+        var retryCount = 0
+        var connected = false
+        val errors = mutableListOf<String>()
+
+        repeat(connectionModel.retryBackoffDurationsInSecond.size + 1) {
             try {
                 connectToServer(connectionModel)
-                return@authAndConnect
+                connected = true
+                return@repeat
             } catch (e: AuthenticationException) {
+                errors.add(e.localizedMessage)
                 throw e
             } catch (e: Throwable) {
                 throwableOnFail = e
-                logger.error("Error connecting to server", e)
-                Thread.sleep(Duration.ofMillis(it.toLong()).toSeconds())
+                val waitTime = connectionModel.retryBackoffDurationsInSecond.getOrNull(it)?.toLong() ?: return@repeat
+                logger.error("Unable to connect ftp server. Error is: ", e)
+                logger.info("Waiting {} seconds for next trial.", waitTime)
+                retryCount += 1
+                errors.add(e.localizedMessage)
+                Thread.sleep(Duration.ofSeconds(waitTime).toSeconds())
             }
         }
-        throwableOnFail?.let { throw it }
+
+        return ConnectionResult(
+            connected = connected,
+            retryCount = retryCount,
+            errors = errors.groupBy { it }.map { ConnectionResult.Error(it.key, it.value.size) }.toSet(),
+        )
     }
 
     open fun listFilesInfo(path: String): Map<String, Long> {
@@ -39,6 +55,13 @@ open class FTPClient : FTPClient() {
         this.connect(connectionModel.host, connectionModel.port)
         if (!this.login(connectionModel.username, connectionModel.password)) {
             throw AuthenticationException("Authentication failed")
+        }
+        if (connectionModel.connectionType == ConnectionType.FTP) {
+            when (connectionModel.connectionMode) {
+                ConnectionMode.Active -> enterLocalActiveMode()
+                ConnectionMode.Passive -> enterLocalPassiveMode()
+                else -> enterLocalPassiveMode()
+            }
         }
         this.setFileType(FTP.BINARY_FILE_TYPE)
     }
