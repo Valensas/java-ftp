@@ -29,7 +29,7 @@ open class FTPClient : FTPClient() {
                 logger.info("Waiting {} seconds for next trial.", waitTime)
                 retryCount += 1
                 errors.add(e.localizedMessage)
-                Thread.sleep(Duration.ofSeconds(waitTime).toSeconds())
+                Thread.sleep(Duration.ofSeconds(waitTime).toMillis())
             }
         }
 
