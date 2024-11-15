@@ -23,6 +23,7 @@ import java.util.Base64
 import java.util.UUID
 import javax.naming.AuthenticationException
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -198,7 +199,7 @@ class FtpApplicationTests {
             val server = EmbeddedSftpServer()
             server.start("username", null, clientPublicKey = keys.public)
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
-            assertThrows<Exception> {
+            val connectionResult =
                 client.authAndConnect(
                     ConnectionModel(
                         ConnectionType.SFTP,
@@ -212,7 +213,7 @@ class FtpApplicationTests {
                         6000,
                     ),
                 )
-            }
+            assertFalse(connectionResult.connected)
         }
     }
 
@@ -357,10 +358,11 @@ class FtpApplicationTests {
             )
         val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
         val spyClient = spy(client)
-        assertThrows<Throwable> {
-            spyClient.authAndConnect(connectionModel)
-        }
-        verify(spyClient, times(3)).connectToServer(connectionModel)
+        val connectionResult = spyClient.authAndConnect(connectionModel)
+        assertFalse(connectionResult.connected)
+        assertEquals("Connection refused", connectionResult.errors.first().description)
+
+        verify(spyClient, times(4)).connectToServer(connectionModel)
     }
 
     @Test
