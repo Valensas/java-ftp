@@ -11,7 +11,7 @@ import javax.net.ssl.SSLException
 import javax.net.ssl.TrustManager
 
 class FTPSClient(
-    private val isImplicit: Boolean = false,
+    isImplicit: Boolean = false,
 ) : FTPClient() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
