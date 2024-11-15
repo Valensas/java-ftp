@@ -11,8 +11,6 @@ open class FTPClient : FTPClient() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun authAndConnect(connectionModel: ConnectionModel): ConnectionResult {
-        var throwableOnFail: Throwable? = null
-
         var retryCount = 0
         var connected = false
         val errors = mutableListOf<String>()
@@ -26,7 +24,6 @@ open class FTPClient : FTPClient() {
                 errors.add(e.localizedMessage)
                 throw e
             } catch (e: Throwable) {
-                throwableOnFail = e
                 val waitTime = connectionModel.retryBackoffDurationsInSecond.getOrNull(it)?.toLong() ?: return@repeat
                 logger.error("Unable to connect ftp server. Error is: ", e)
                 logger.info("Waiting {} seconds for next trial.", waitTime)

@@ -9,11 +9,11 @@ import com.valensas.ftp.model.SFTPClient
 class FtpClientFactory {
     fun createFtpClient(
         type: ConnectionType,
-        variant: ConnectionVariant? = null,
-    ): FTPClient =
-        when (type) {
-            ConnectionType.FTP -> FTPClient()
-            ConnectionType.FTPS -> FTPSClient(variant == ConnectionVariant.Implicit)
-            ConnectionType.SFTP -> SFTPClient()
-        }
+        variant: ConnectionVariant? = null
+    ): FTPClient = when (type) {
+        ConnectionType.FTP -> FTPClient()
+        ConnectionType.FTPS -> FTPSClient(variant == ConnectionVariant.Implicit)
+        ConnectionType.SFTP -> SFTPClient()
+    }
 }
+
