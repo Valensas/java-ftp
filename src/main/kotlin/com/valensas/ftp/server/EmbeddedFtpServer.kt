@@ -71,5 +71,3 @@ class EmbeddedFtpServer {
 
     fun getHost(): String = listenerFactory.serverAddress
 }
-
-
