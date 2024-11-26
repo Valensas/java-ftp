@@ -7,6 +7,7 @@ import org.apache.ftpserver.listener.ListenerFactory
 import org.apache.ftpserver.ssl.SslConfigurationFactory
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory
 import org.apache.ftpserver.usermanager.impl.BaseUser
+import org.apache.ftpserver.usermanager.impl.WritePermission
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -23,7 +24,7 @@ class EmbeddedFtpServer {
         port: Int = 990,
         isImplicit: Boolean = false,
         certificatePath: String? = null,
-        path: Path? = Files.createTempDirectory("ftp-test"),
+        path: Path? = Files.createTempDirectory("ftp-test")
     ) {
         val serverFactory = FtpServerFactory()
         listenerFactory = ListenerFactory()
@@ -44,6 +45,9 @@ class EmbeddedFtpServer {
         val user = BaseUser()
         user.name = username
         user.password = password
+        user.authorities = listOf(
+            WritePermission()
+        )
         path?.let {
             user.homeDirectory = it.toAbsolutePath().toString()
         }
@@ -66,3 +70,4 @@ class EmbeddedFtpServer {
 
     fun getHost(): String = listenerFactory.serverAddress
 }
+
