@@ -7,6 +7,7 @@ import org.apache.ftpserver.listener.ListenerFactory
 import org.apache.ftpserver.ssl.SslConfigurationFactory
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory
 import org.apache.ftpserver.usermanager.impl.BaseUser
+import org.apache.ftpserver.usermanager.impl.WritePermission
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -44,6 +45,10 @@ class EmbeddedFtpServer {
         val user = BaseUser()
         user.name = username
         user.password = password
+        user.authorities =
+            listOf(
+                WritePermission(),
+            )
         path?.let {
             user.homeDirectory = it.toAbsolutePath().toString()
         }
