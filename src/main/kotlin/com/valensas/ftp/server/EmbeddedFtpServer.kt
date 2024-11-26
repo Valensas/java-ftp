@@ -24,7 +24,7 @@ class EmbeddedFtpServer {
         port: Int = 990,
         isImplicit: Boolean = false,
         certificatePath: String? = null,
-        path: Path? = Files.createTempDirectory("ftp-test")
+        path: Path? = Files.createTempDirectory("ftp-test"),
     ) {
         val serverFactory = FtpServerFactory()
         listenerFactory = ListenerFactory()
@@ -45,9 +45,10 @@ class EmbeddedFtpServer {
         val user = BaseUser()
         user.name = username
         user.password = password
-        user.authorities = listOf(
-            WritePermission()
-        )
+        user.authorities =
+            listOf(
+                WritePermission(),
+            )
         path?.let {
             user.homeDirectory = it.toAbsolutePath().toString()
         }
@@ -70,4 +71,5 @@ class EmbeddedFtpServer {
 
     fun getHost(): String = listenerFactory.serverAddress
 }
+
 
