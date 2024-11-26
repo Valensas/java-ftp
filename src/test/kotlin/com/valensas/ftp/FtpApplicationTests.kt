@@ -354,7 +354,7 @@ class FtpApplicationTests {
                 null,
                 ConnectionMode.Passive,
                 6000,
-                retryBackoffDurationsInSecond = listOf(1000, 2000, 3000),
+                retryBackoffDurationsInSecond = listOf(1, 2, 3),
             )
         val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
         val spyClient = spy(client)
