@@ -42,7 +42,19 @@ class SFTPClient : FTPClient() {
             channel.rm(remoteFileName)
             true
         } catch (e: Exception) {
-            logger.error("Can not deleted $remoteFileName.", e)
+            logger.warn("Can not delete $remoteFileName file.", e)
+            throw e
+        }
+
+    override fun rename(
+        from: String?,
+        to: String?,
+    ): Boolean =
+        try {
+            channel.rename(from, to)
+            true
+        } catch (e: Exception) {
+            logger.warn("Can not move file from $from to $to.", e)
             throw e
         }
 
@@ -54,7 +66,7 @@ class SFTPClient : FTPClient() {
             channel.put(local, remote)
             return true
         } catch (e: Exception) {
-            logger.error("Error happened while uploading file", e)
+            logger.warn("Error happened while uploading file", e)
             throw e
         }
     }
