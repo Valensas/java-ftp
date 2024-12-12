@@ -1,6 +1,7 @@
 package com.valensas.ftp.model
 
 data class ConnectionModel(
+    val name: String,
     val connectionType: ConnectionType,
     val host: String,
     val port: Int,

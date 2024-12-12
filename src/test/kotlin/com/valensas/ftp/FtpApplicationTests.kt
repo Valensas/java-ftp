@@ -39,6 +39,7 @@ class FtpApplicationTests {
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTP)
             val connectionModel =
                 ConnectionModel(
+                    "name",
                     ConnectionType.SFTP,
                     "localhost",
                     server.getPort(),
@@ -68,6 +69,7 @@ class FtpApplicationTests {
             )
             val connectionModel =
                 ConnectionModel(
+                    "name",
                     ConnectionType.FTPS,
                     server.getHost(),
                     server.getPort(),
@@ -98,6 +100,7 @@ class FtpApplicationTests {
             )
             val connectionModel =
                 ConnectionModel(
+                    "name",
                     ConnectionType.FTPS,
                     server.getHost(),
                     server.getPort(),
@@ -123,6 +126,7 @@ class FtpApplicationTests {
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.authAndConnect(
                 ConnectionModel(
+                    "name",
                     ConnectionType.SFTP,
                     server.getHost(),
                     server.getPort(),
@@ -149,6 +153,7 @@ class FtpApplicationTests {
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.authAndConnect(
                 ConnectionModel(
+                    "name",
                     ConnectionType.SFTP,
                     server.getHost(),
                     server.getPort(),
@@ -175,6 +180,7 @@ class FtpApplicationTests {
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.authAndConnect(
                 ConnectionModel(
+                    "name",
                     ConnectionType.SFTP,
                     server.getHost(),
                     server.getPort(),
@@ -202,6 +208,7 @@ class FtpApplicationTests {
             val connectionResult =
                 client.authAndConnect(
                     ConnectionModel(
+                        "name",
                         ConnectionType.SFTP,
                         server.getHost(),
                         server.getPort(),
@@ -225,6 +232,7 @@ class FtpApplicationTests {
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.authAndConnect(
                 ConnectionModel(
+                    "name",
                     ConnectionType.SFTP,
                     server.getHost(),
                     server.getPort(),
@@ -251,6 +259,7 @@ class FtpApplicationTests {
         val inputStream = fileContent.byteInputStream()
         client.authAndConnect(
             ConnectionModel(
+                "name",
                 ConnectionType.SFTP,
                 server.getHost(),
                 server.getPort(),
@@ -280,6 +289,7 @@ class FtpApplicationTests {
         val inputStream = fileContent.byteInputStream()
         client.authAndConnect(
             ConnectionModel(
+                "name",
                 ConnectionType.SFTP,
                 server.getHost(),
                 server.getPort(),
@@ -313,6 +323,7 @@ class FtpApplicationTests {
             val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
             client.authAndConnect(
                 ConnectionModel(
+                    "name",
                     ConnectionType.SFTP,
                     server.getHost(),
                     server.getPort(),
@@ -345,6 +356,7 @@ class FtpApplicationTests {
         )
         val connectionModel =
             ConnectionModel(
+                "name",
                 ConnectionType.FTPS,
                 server.getHost(),
                 getRandomFreePort(),
@@ -379,6 +391,7 @@ class FtpApplicationTests {
         )
         val connectionModel =
             ConnectionModel(
+                "name",
                 ConnectionType.FTPS,
                 server.getHost(),
                 server.getPort(),
