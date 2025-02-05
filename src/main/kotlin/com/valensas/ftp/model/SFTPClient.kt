@@ -79,6 +79,14 @@ class SFTPClient : FTPClient() {
             .associate { it.filename to it.attrs.size }
     }
 
+    override fun listDirectoryInfo(path: String): Map<String, Long> {
+        val fileVector = channel.ls(path)
+        return fileVector
+            .map { it as LsEntry }
+            .filter { !it.attrs.isDir }
+            .associate { it.filename to it.attrs.size }
+    }
+
     override fun completePendingCommand(): Boolean = true
 
     override fun isConnected(): Boolean = channel.isConnected
