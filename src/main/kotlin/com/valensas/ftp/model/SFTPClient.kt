@@ -83,7 +83,7 @@ class SFTPClient : FTPClient() {
         val fileVector = channel.ls(path)
         return fileVector
             .map { it as LsEntry }
-            .filter { !it.attrs.isDir }
+            .filter { it.attrs.isDir && it.filename != "." && it.filename != ".." }
             .associate { it.filename to it.attrs.size }
     }
 
