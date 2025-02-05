@@ -42,9 +42,19 @@ open class FTPClient : FTPClient() {
 
     open fun listFilesInfo(path: String): Map<String, Long> {
         val filesInfo =
-            this.listFiles(path).map {
-                it.name to it.size
-            }
+            this
+                .listFiles(path)
+                .filter { !it.isDirectory }
+                .map { it.name to it.size }
+        return filesInfo.toMap()
+    }
+
+    open fun listDirectoryInfo(path: String): Map<String, Long> {
+        val filesInfo =
+            this
+                .listFiles(path)
+                .filter { it.isDirectory }
+                .map { it.name to it.size }
         return filesInfo.toMap()
     }
 
