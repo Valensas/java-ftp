@@ -117,4 +117,21 @@ class SFTPClient : FTPClient() {
             session.timeout = timeout
         }
     }
+
+    override fun makeDirectory(pathname: String): Boolean {
+        try {
+            val directories = pathname.split("/")
+            var current = "/"
+            directories.forEach {
+                val dirs = listDirectoryInfo(current)
+                current = current + it + "/"
+                if (dirs.containsKey(it)) return@forEach
+                channel.mkdir(current.removeSuffix("/"))
+            }
+            return true
+        } catch (e: Exception) {
+            logger.warn("Error happened while creating directory", e)
+            throw e
+        }
+    }
 }

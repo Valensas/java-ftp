@@ -8,6 +8,7 @@ import com.valensas.ftp.model.ConnectionVariant
 import com.valensas.ftp.model.SFTPClient
 import com.valensas.ftp.server.EmbeddedFtpServer
 import com.valensas.ftp.server.EmbeddedSftpServer
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -337,6 +338,36 @@ class FtpApplicationTests {
             )
             assertTrue(client.isConnected)
             assertNotNull(client.listDirectories("."))
+            client.disconnect()
+            server.stop()
+        }
+    }
+
+    @Test
+    fun `Test sftp mkdir function`() {
+        assertDoesNotThrow {
+            val server = EmbeddedSftpServer()
+            server.start("username", "password")
+            val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+            client.authAndConnect(
+                ConnectionModel(
+                    "name",
+                    ConnectionType.SFTP,
+                    server.getHost(),
+                    server.getPort(),
+                    "username",
+                    "password",
+                    Fake.privateKey(),
+                    null,
+                    ConnectionMode.Passive,
+                    6000,
+                ),
+            )
+            Assertions.assertTrue(client.isConnected)
+            val dir = "test/test2/test3"
+            client.makeDirectory(dir)
+            Assertions.assertTrue(client.listDirectoryInfo("test").containsKey("test2"))
+            Assertions.assertTrue(client.listDirectoryInfo("test/test2").contains("test3"))
             client.disconnect()
             server.stop()
         }
