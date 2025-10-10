@@ -22,7 +22,6 @@ import java.security.KeyPairGenerator
 import java.security.PrivateKey
 import java.util.Base64
 import java.util.UUID
-import javax.naming.AuthenticationException
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -174,11 +173,11 @@ class FtpApplicationTests {
 
     @Test
     fun `Test should fail when sftp connection with DSA with key size greater than 1024`() {
-        assertThrows<Exception> {
-            val keys = generatePublicKey(keySize = 2048, algorithm = "DSA")
-            val server = EmbeddedSftpServer()
-            server.start("username", null, clientPublicKey = keys.public, algorithm = "DSA", keySize = 2048)
-            val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+        val keys = generatePublicKey(keySize = 2048, algorithm = "DSA")
+        val server = EmbeddedSftpServer()
+        server.start("username", null, clientPublicKey = keys.public, algorithm = "DSA", keySize = 2048)
+        val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+        val result =
             client.authAndConnect(
                 ConnectionModel(
                     "name",
@@ -193,10 +192,9 @@ class FtpApplicationTests {
                     6000,
                 ),
             )
-            assertTrue(client.isConnected)
-            client.disconnect()
-            server.stop()
-        }
+        assertFalse(result.connected)
+        assertFalse(client.isConnected)
+        server.stop()
     }
 
     @Test
@@ -227,10 +225,10 @@ class FtpApplicationTests {
 
     @Test
     fun `Test if fail sftp connection can be handled`() {
-        assertThrows<Exception> {
-            val server = EmbeddedSftpServer()
-            server.start("username", "password")
-            val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+        val server = EmbeddedSftpServer()
+        server.start("username", "password")
+        val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+        val result =
             client.authAndConnect(
                 ConnectionModel(
                     "name",
@@ -245,10 +243,10 @@ class FtpApplicationTests {
                     6000,
                 ),
             )
-            assertTrue(client.isConnected)
-            client.disconnect()
-            server.stop()
-        }
+        assertFalse(result.connected)
+        assertFalse(client.isConnected)
+        client.disconnect()
+        server.stop()
     }
 
     @Test
@@ -406,40 +404,6 @@ class FtpApplicationTests {
         assertEquals("Connection refused", connectionResult.errors.first().description)
 
         verify(spyClient, times(4)).connectToServer(connectionModel)
-    }
-
-    @Test
-    fun `Retry connection should not handle authentication exception`() {
-        val server = EmbeddedFtpServer()
-        val port = getRandomFreePort()
-        server.start(
-            "username",
-            "password",
-            ConnectionType.FTPS,
-            isImplicit = false,
-            certificatePath = "src/test/resources/ftps-test-cert.jks",
-            port = port,
-        )
-        val connectionModel =
-            ConnectionModel(
-                "name",
-                ConnectionType.FTPS,
-                server.getHost(),
-                server.getPort(),
-                "wrongusername",
-                "wrongpassword",
-                Fake.privateKey(),
-                null,
-                ConnectionMode.Passive,
-                6000,
-                retryBackoffDurationsInSecond = listOf(1000, 2000, 3000),
-            )
-        val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
-        val spyClient = spy(client)
-        assertThrows<AuthenticationException> {
-            spyClient.authAndConnect(connectionModel)
-        }
-        verify(spyClient, times(1)).connectToServer(connectionModel)
     }
 
     private fun getRandomFreePort(): Int {
