@@ -89,7 +89,21 @@ class SFTPClient : FTPClient() {
 
     override fun completePendingCommand(): Boolean = true
 
-    override fun isConnected(): Boolean = channel.isConnected || session.isConnected
+    override fun isConnected(): Boolean {
+        val sessionConnected =
+            if (::channel.isInitialized) {
+                channel.isConnected
+            } else {
+                false
+            }
+        val channelConnected =
+            if (::session.isInitialized) {
+                session.isConnected
+            } else {
+                false
+            }
+        return sessionConnected || channelConnected
+    }
 
     override fun disconnect() {
         if (::channel.isInitialized) {
