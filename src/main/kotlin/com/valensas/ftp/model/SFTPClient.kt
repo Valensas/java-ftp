@@ -91,14 +91,14 @@ class SFTPClient : FTPClient() {
 
     override fun isConnected(): Boolean {
         val sessionConnected =
-            if (::channel.isInitialized) {
-                channel.isConnected
+            if (::session.isInitialized) {
+                session.isConnected
             } else {
                 false
             }
         val channelConnected =
-            if (::session.isInitialized) {
-                session.isConnected
+            if (::channel.isInitialized) {
+                channel.isConnected
             } else {
                 false
             }
