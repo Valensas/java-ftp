@@ -89,14 +89,16 @@ class SFTPClient : FTPClient() {
 
     override fun completePendingCommand(): Boolean = true
 
-    override fun isConnected(): Boolean = channel.isConnected
+    override fun isConnected(): Boolean = channel.isConnected || session.isConnected
 
     override fun disconnect() {
-        if (::session.isInitialized) {
-            session.disconnect()
-        }
         if (::channel.isInitialized) {
+            logger.debug("Disconnecting from sftp channel.")
             channel.disconnect()
+        }
+        if (::session.isInitialized) {
+            logger.debug("Disconnecting from sftp session.")
+            session.disconnect()
         }
     }
 
