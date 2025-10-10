@@ -174,11 +174,11 @@ class FtpApplicationTests {
 
     @Test
     fun `Test should fail when sftp connection with DSA with key size greater than 1024`() {
-        assertThrows<Exception> {
-            val keys = generatePublicKey(keySize = 2048, algorithm = "DSA")
-            val server = EmbeddedSftpServer()
-            server.start("username", null, clientPublicKey = keys.public, algorithm = "DSA", keySize = 2048)
-            val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+        val keys = generatePublicKey(keySize = 2048, algorithm = "DSA")
+        val server = EmbeddedSftpServer()
+        server.start("username", null, clientPublicKey = keys.public, algorithm = "DSA", keySize = 2048)
+        val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+        val result =
             client.authAndConnect(
                 ConnectionModel(
                     "name",
@@ -193,10 +193,9 @@ class FtpApplicationTests {
                     6000,
                 ),
             )
-            assertTrue(client.isConnected)
-            client.disconnect()
-            server.stop()
-        }
+        assertFalse(result.connected)
+        assertFalse(client.isConnected)
+        server.stop()
     }
 
     @Test
@@ -227,10 +226,10 @@ class FtpApplicationTests {
 
     @Test
     fun `Test if fail sftp connection can be handled`() {
-        assertThrows<Exception> {
-            val server = EmbeddedSftpServer()
-            server.start("username", "password")
-            val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+        val server = EmbeddedSftpServer()
+        server.start("username", "password")
+        val client = ftpClientFactory.createFtpClient(ConnectionType.SFTP) as SFTPClient
+        val result =
             client.authAndConnect(
                 ConnectionModel(
                     "name",
@@ -245,10 +244,10 @@ class FtpApplicationTests {
                     6000,
                 ),
             )
-            assertTrue(client.isConnected)
-            client.disconnect()
-            server.stop()
-        }
+        assertFalse(result.connected)
+        assertFalse(client.isConnected)
+        client.disconnect()
+        server.stop()
     }
 
     @Test
