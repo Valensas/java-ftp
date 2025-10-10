@@ -1,20 +1,21 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.24"
-    kotlin("plugin.spring") version "1.9.24"
+    kotlin("jvm") version "1.9.25"
+    kotlin("plugin.spring") version "1.9.25"
     id("jacoco")
     id("org.jmailen.kotlinter") version "4.4.1"
+    id("com.adarshr.test-logger") version "4.0.0"
     id("com.github.ben-manes.versions") version "0.51.0"
-    id("org.springframework.boot") version "3.3.2"
-    id("io.spring.dependency-management") version "1.1.6"
+    id("org.springframework.boot") version "3.5.6"
+    id("io.spring.dependency-management") version "1.1.7"
     id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.3"
     id("maven-publish")
 }
 
 group = "com.valensas"
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
     mavenCentral()
@@ -33,18 +34,18 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // Ftp
-    implementation("commons-net:commons-net:3.11.1")
+    implementation("commons-net:commons-net:3.12.0")
     implementation("com.jcraft:jsch:0.1.55")
-    implementation("org.apache.sshd:sshd-core:2.11.0")
-    implementation("org.apache.sshd:sshd-common:2.11.0")
-    implementation("org.apache.sshd:sshd-sftp:2.11.0")
-    implementation("org.apache.ftpserver:ftpserver-core:1.0.0")
+    implementation("org.apache.sshd:sshd-core:2.16.0")
+    implementation("org.apache.sshd:sshd-common:2.16.0")
+    implementation("org.apache.sshd:sshd-sftp:2.16.0")
+    implementation("org.apache.ftpserver:ftpserver-core:1.2.1")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 }
 
