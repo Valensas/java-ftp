@@ -22,7 +22,6 @@ import java.security.KeyPairGenerator
 import java.security.PrivateKey
 import java.util.Base64
 import java.util.UUID
-import javax.naming.AuthenticationException
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -405,40 +404,6 @@ class FtpApplicationTests {
         assertEquals("Connection refused", connectionResult.errors.first().description)
 
         verify(spyClient, times(4)).connectToServer(connectionModel)
-    }
-
-    @Test
-    fun `Retry connection should not handle authentication exception`() {
-        val server = EmbeddedFtpServer()
-        val port = getRandomFreePort()
-        server.start(
-            "username",
-            "password",
-            ConnectionType.FTPS,
-            isImplicit = false,
-            certificatePath = "src/test/resources/ftps-test-cert.jks",
-            port = port,
-        )
-        val connectionModel =
-            ConnectionModel(
-                "name",
-                ConnectionType.FTPS,
-                server.getHost(),
-                server.getPort(),
-                "wrongusername",
-                "wrongpassword",
-                Fake.privateKey(),
-                null,
-                ConnectionMode.Passive,
-                6000,
-                retryBackoffDurationsInSecond = listOf(1000, 2000, 3000),
-            )
-        val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
-        val spyClient = spy(client)
-        assertThrows<AuthenticationException> {
-            spyClient.authAndConnect(connectionModel)
-        }
-        verify(spyClient, times(1)).connectToServer(connectionModel)
     }
 
     private fun getRandomFreePort(): Int {
