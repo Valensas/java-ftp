@@ -1,6 +1,8 @@
 package com.valensas.ftp.server
 
 import com.valensas.ftp.model.ConnectionType
+import org.apache.ftpserver.ConnectionConfig
+import org.apache.ftpserver.ConnectionConfigFactory
 import org.apache.ftpserver.FtpServer
 import org.apache.ftpserver.FtpServerFactory
 import org.apache.ftpserver.listener.ListenerFactory
@@ -25,6 +27,7 @@ class EmbeddedFtpServer {
         isImplicit: Boolean = false,
         certificatePath: String? = null,
         path: Path? = Files.createTempDirectory("ftp-test"),
+        connectionConfig: ConnectionConfig? = null,
     ) {
         val serverFactory = FtpServerFactory()
         listenerFactory = ListenerFactory()
@@ -39,6 +42,8 @@ class EmbeddedFtpServer {
         }
         listenerFactory.serverAddress = host
         listenerFactory.port = port
+        serverFactory.connectionConfig = connectionConfig ?: ConnectionConfigFactory().createConnectionConfig()
+
         val userManagerFactory = PropertiesUserManagerFactory()
         val userManager = userManagerFactory.createUserManager()
 
