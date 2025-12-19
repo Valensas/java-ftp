@@ -10,6 +10,7 @@ plugins {
     id("org.springframework.boot") version "3.5.6"
     id("io.spring.dependency-management") version "1.1.7"
     id("maven-publish")
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.3"
 }
 
 group = "com.valensas"
@@ -84,6 +85,43 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
+        }
+    }
+}
+
+signing {
+    val keyId = System.getenv("SIGNING_KEYID")
+    val secretKey = System.getenv("SIGNING_SECRETKEY")
+    val passphrase = System.getenv("SIGNING_PASSPHRASE")
+
+    useInMemoryPgpKeys(keyId, secretKey, passphrase)
+}
+
+centralPortal {
+    username = System.getenv("SONATYPE_USERNAME")
+    password = System.getenv("SONATYPE_PASSWORD")
+
+    pom {
+        name = "Java Ftp"
+        description = "This library contains embedded ftp server and ftp factory which supports ftp, ftps, sftp."
+        url = "https://valensas.com/"
+        scm {
+            url = "https://github.com/Valensas/java-ftp"
+        }
+
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+
+        developers {
+            developer {
+                id.set("0")
+                name.set("Valensas")
+                email.set("info@valensas.com")
+            }
         }
     }
 }
