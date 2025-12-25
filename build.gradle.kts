@@ -20,19 +20,6 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
     mavenCentral()
-    if (project.hasProperty("GITLAB_REPO_URL")) {
-        maven {
-            name = "Gitlab"
-            url = uri(project.property("GITLAB_REPO_URL").toString())
-            credentials(HttpHeaderCredentials::class.java) {
-                name = project.findProperty("GITLAB_TOKEN_NAME")?.toString()
-                value = project.findProperty("GITLAB_TOKEN")?.toString()
-            }
-            authentication {
-                create("header", HttpHeaderAuthentication::class)
-            }
-        }
-    }
     mavenLocal()
 }
 
