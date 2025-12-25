@@ -8,31 +8,31 @@ import org.springframework.aot.hint.RuntimeHintsRegistrar
 import org.springframework.data.util.TypeScanner
 
 class CustomRuntimeHintsRegistrar : RuntimeHintsRegistrar {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun registerHints(
         hints: RuntimeHints,
-        classLoader: ClassLoader?
+        classLoader: ClassLoader?,
     ) {
-        val packages = listOf("com.valensas.ftp.model",)
+        val packages = listOf("com.valensas.ftp.model")
 
         logger.info(
             "Setting reflection hints for classes in packages: {}",
-            packages.joinToString(", ")
+            packages.joinToString(", "),
         )
 
         TypeScanner
             .typeScanner(requireNotNull(classLoader))
             .scanPackages(packages)
             .forEach { clazz ->
-                hints.reflection()
+                hints
+                    .reflection()
                     .registerType(clazz, *MemberCategory.entries.toTypedArray())
 
                 HintUtils.registerSerializationHints(
                     hints,
                     clazz,
-                    classLoader
+                    classLoader,
                 )
             }
     }
