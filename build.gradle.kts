@@ -1,16 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
+    kotlin("jvm") version "2.1.0"
+    kotlin("plugin.spring") version "2.1.0"
     id("jacoco")
-    id("org.jmailen.kotlinter") version "4.4.1"
+    id("org.jmailen.kotlinter") version "5.3.0"
     id("com.adarshr.test-logger") version "4.0.0"
-    id("com.github.ben-manes.versions") version "0.51.0"
-    id("org.springframework.boot") version "3.5.6"
+    id("com.github.ben-manes.versions") version "0.53.0"
+    id("org.springframework.boot") version "4.0.1"
     id("io.spring.dependency-management") version "1.1.7"
     id("maven-publish")
-    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.3"
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.4"
 }
 
 group = "com.valensas"
@@ -38,7 +38,7 @@ dependencies {
 
     // Ftp
     implementation("commons-net:commons-net:3.12.0")
-    implementation("com.jcraft:jsch:0.1.55")
+    implementation("com.github.mwiede:jsch:2.27.7")
     implementation("org.apache.sshd:sshd-core:2.16.0")
     implementation("org.apache.sshd:sshd-common:2.16.0")
     implementation("org.apache.sshd:sshd-sftp:2.16.0")
