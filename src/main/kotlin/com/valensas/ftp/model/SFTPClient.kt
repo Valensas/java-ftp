@@ -30,6 +30,8 @@ class SFTPClient : FTPClient() {
             session.setPassword(it)
         }
         session.setConfig("StrictHostKeyChecking", connectionModel.strictHostKeyChecking)
+        session.setConfig("server_host_key", session.getConfig("server_host_key") + ",ssh-dss")
+        session.setConfig("PubkeyAcceptedAlgorithms", session.getConfig("PubkeyAcceptedAlgorithms") + ",ssh-dss")
         session.connect()
         channel = session.openChannel("sftp") as ChannelSftp
         channel.connect()
