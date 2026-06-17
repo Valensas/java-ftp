@@ -34,7 +34,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("com.valensas:graalvm-native-support:1.0.8")
+    implementation("com.valensas:graalvm-native-support:1.1.0")
 
     // Ftp
     implementation("commons-net:commons-net:3.13.0")
