@@ -39,30 +39,28 @@ class SFTPClient : FTPClient() {
 
     override fun retrieveFileStream(remoteFileName: String): InputStream = channel.get(remoteFileName)
 
-    override fun deleteFile(remoteFileName: String): Boolean =
-        try {
-            channel.rm(remoteFileName)
-            true
-        } catch (e: Exception) {
-            logger.warn("Can not delete $remoteFileName file.", e)
-            throw e
-        }
+    override fun deleteFile(remoteFileName: String): Boolean = try {
+        channel.rm(remoteFileName)
+        true
+    } catch (e: Exception) {
+        logger.warn("Can not delete $remoteFileName file.", e)
+        throw e
+    }
 
     override fun rename(
         from: String?,
-        to: String?,
-    ): Boolean =
-        try {
-            channel.rename(from, to)
-            true
-        } catch (e: Exception) {
-            logger.warn("Can not move file from $from to $to.", e)
-            throw e
-        }
+        to: String?
+    ): Boolean = try {
+        channel.rename(from, to)
+        true
+    } catch (e: Exception) {
+        logger.warn("Can not move file from $from to $to.", e)
+        throw e
+    }
 
     override fun storeFile(
         remote: String?,
-        local: InputStream?,
+        local: InputStream?
     ): Boolean {
         try {
             channel.put(local, remote)

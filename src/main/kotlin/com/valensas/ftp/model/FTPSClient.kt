@@ -11,7 +11,7 @@ import javax.net.ssl.SSLException
 import javax.net.ssl.TrustManager
 
 class FTPSClient(
-    isImplicit: Boolean = false,
+    isImplicit: Boolean = false
 ) : FTPClient() {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
@@ -86,14 +86,13 @@ class FTPSClient(
     @Throws(IOException::class)
     override fun sendCommand(
         command: String,
-        args: String?,
-    ): Int =
-        try {
-            ftpsClient.sendCommand(command, args)
-        } catch (e: Throwable) {
-            logger.error("An error occurred while sending command $command to the FTPS server", e)
-            throw e
-        }
+        args: String?
+    ): Int = try {
+        ftpsClient.sendCommand(command, args)
+    } catch (e: Throwable) {
+        logger.error("An error occurred while sending command $command to the FTPS server", e)
+        throw e
+    }
 
     @Throws(IOException::class)
     override fun isConnected(): Boolean = ftpsClient.isConnected
