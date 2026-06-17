@@ -7,7 +7,7 @@ import org.springframework.aot.hint.RuntimeHintsRegistrar
 class JschRuntimeHintsRegistrar : RuntimeHintsRegistrar {
     override fun registerHints(
         hints: RuntimeHints,
-        classLoader: ClassLoader?,
+        classLoader: ClassLoader?
     ) {
         val reflection = hints.reflection()
 
@@ -19,12 +19,12 @@ class JschRuntimeHintsRegistrar : RuntimeHintsRegistrar {
             "javax.crypto.KeyAgreement",
             "java.security.MessageDigest",
             "java.security.KeyPairGenerator",
-            "java.security.Signature",
+            "java.security.Signature"
         ).forEach {
             reflection.registerTypeIfPresent(
                 classLoader,
                 it,
-                ::configureForReflection,
+                ::configureForReflection
             )
         }
 
@@ -59,14 +59,14 @@ class JschRuntimeHintsRegistrar : RuntimeHintsRegistrar {
                 "com.jcraft.jsch.DHG1",
                 "com.jcraft.jsch.DHG14",
                 "com.jcraft.jsch.DHGEX",
-                "com.jcraft.jsch.DHGEX256",
+                "com.jcraft.jsch.DHGEX256"
             )
 
         jschClasses.forEach {
             reflection.registerTypeIfPresent(
                 classLoader,
                 it,
-                ::configureForReflection,
+                ::configureForReflection
             )
         }
     }
@@ -75,7 +75,7 @@ class JschRuntimeHintsRegistrar : RuntimeHintsRegistrar {
         typeHint.withMembers(
             MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
             MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.DECLARED_FIELDS,
+            MemberCategory.DECLARED_FIELDS
         )
     }
 }

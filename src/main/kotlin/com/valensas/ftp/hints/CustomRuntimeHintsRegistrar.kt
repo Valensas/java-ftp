@@ -12,13 +12,13 @@ class CustomRuntimeHintsRegistrar : RuntimeHintsRegistrar {
 
     override fun registerHints(
         hints: RuntimeHints,
-        classLoader: ClassLoader?,
+        classLoader: ClassLoader?
     ) {
         val packages = listOf("com.valensas.ftp.model")
 
         logger.info(
             "Setting reflection hints for classes in packages: {}",
-            packages.joinToString(", "),
+            packages.joinToString(", ")
         )
 
         TypeScanner
@@ -32,7 +32,7 @@ class CustomRuntimeHintsRegistrar : RuntimeHintsRegistrar {
                 HintUtils.registerSerializationHints(
                     hints,
                     clazz,
-                    classLoader,
+                    classLoader
                 )
             }
     }

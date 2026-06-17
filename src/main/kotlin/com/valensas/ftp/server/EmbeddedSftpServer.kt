@@ -27,7 +27,7 @@ class EmbeddedSftpServer {
         path: Path? = Files.createTempDirectory("ftp-test"),
         clientPublicKey: PublicKey? = null,
         algorithm: String = "RSA",
-        keySize: Int = 2048,
+        keySize: Int = 2048
     ) {
         sshServer = SshServer.setUpDefaultServer()
         val fileSystemFactory = VirtualFileSystemFactory()
@@ -72,7 +72,7 @@ class EmbeddedSftpServer {
 
     private fun setProvider(
         algorithm: String,
-        keySize: Int,
+        keySize: Int
     ): SimpleGeneratorHostKeyProvider {
         val provider = SimpleGeneratorHostKeyProvider()
         provider.algorithm = algorithm

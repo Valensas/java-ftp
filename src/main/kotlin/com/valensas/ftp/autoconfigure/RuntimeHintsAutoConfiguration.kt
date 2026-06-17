@@ -8,6 +8,6 @@ import org.springframework.context.annotation.ImportRuntimeHints
 @Configuration
 @ImportRuntimeHints(
     CustomRuntimeHintsRegistrar::class,
-    JschRuntimeHintsRegistrar::class,
+    JschRuntimeHintsRegistrar::class
 )
 class RuntimeHintsAutoConfiguration

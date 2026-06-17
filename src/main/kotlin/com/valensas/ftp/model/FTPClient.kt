@@ -36,7 +36,7 @@ open class FTPClient : FTPClient() {
         return ConnectionResult(
             connected = connected,
             retryCount = retryCount,
-            errors = errors.groupBy { it }.map { ConnectionResult.Error(it.key, it.value.size) }.toSet(),
+            errors = errors.groupBy { it }.map { ConnectionResult.Error(it.key, it.value.size) }.toSet()
         )
     }
 

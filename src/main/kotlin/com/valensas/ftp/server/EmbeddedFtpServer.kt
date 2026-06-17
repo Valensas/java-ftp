@@ -27,7 +27,7 @@ class EmbeddedFtpServer {
         isImplicit: Boolean = false,
         certificatePath: String? = null,
         path: Path? = Files.createTempDirectory("ftp-test"),
-        connectionConfig: ConnectionConfig? = null,
+        connectionConfig: ConnectionConfig? = null
     ) {
         val serverFactory = FtpServerFactory()
         listenerFactory = ListenerFactory()
@@ -52,7 +52,7 @@ class EmbeddedFtpServer {
         user.password = password
         user.authorities =
             listOf(
-                WritePermission(),
+                WritePermission()
             )
         path?.let {
             user.homeDirectory = it.toAbsolutePath().toString()

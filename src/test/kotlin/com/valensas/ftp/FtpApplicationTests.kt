@@ -48,7 +48,7 @@ class FtpApplicationTests {
                     Fake.privateKey(),
                     null,
                     ConnectionMode.Passive,
-                    6000,
+                    6000
                 )
             client.authAndConnect(connectionModel)
             server.stop()
@@ -65,7 +65,7 @@ class FtpApplicationTests {
                 ConnectionType.FTPS,
                 isImplicit = true,
                 certificatePath = "src/test/resources/ftps-test-cert.jks",
-                port = getRandomFreePort(),
+                port = getRandomFreePort()
             )
             val connectionModel =
                 ConnectionModel(
@@ -78,7 +78,7 @@ class FtpApplicationTests {
                     Fake.privateKey(),
                     null,
                     ConnectionMode.Passive,
-                    6000,
+                    6000
                 )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Implicit)
             client.authAndConnect(connectionModel)
@@ -96,7 +96,7 @@ class FtpApplicationTests {
                 ConnectionType.FTPS,
                 isImplicit = false,
                 certificatePath = "src/test/resources/ftps-test-cert.jks",
-                port = getRandomFreePort(),
+                port = getRandomFreePort()
             )
             val connectionModel =
                 ConnectionModel(
@@ -109,7 +109,7 @@ class FtpApplicationTests {
                     Fake.privateKey(),
                     null,
                     ConnectionMode.Passive,
-                    6000,
+                    6000
                 )
             val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
             client.authAndConnect(connectionModel)
@@ -135,8 +135,8 @@ class FtpApplicationTests {
                     privateKey = keys.private.toPEM(),
                     null,
                     ConnectionMode.Passive,
-                    6000,
-                ),
+                    6000
+                )
             )
             assertTrue(client.isConnected)
             client.disconnect()
@@ -162,8 +162,8 @@ class FtpApplicationTests {
                     privateKey = keys.private.toPEM(),
                     null,
                     ConnectionMode.Passive,
-                    6000,
-                ),
+                    6000
+                )
             )
             assertTrue(client.isConnected)
             client.disconnect()
@@ -189,8 +189,8 @@ class FtpApplicationTests {
                     privateKey = keys.private.toPEM(),
                     null,
                     ConnectionMode.Passive,
-                    6000,
-                ),
+                    6000
+                )
             )
         assertFalse(result.connected)
         assertFalse(client.isConnected)
@@ -216,8 +216,8 @@ class FtpApplicationTests {
                         Fake.privateKey(),
                         null,
                         ConnectionMode.Passive,
-                        6000,
-                    ),
+                        6000
+                    )
                 )
             assertFalse(connectionResult.connected)
         }
@@ -240,8 +240,8 @@ class FtpApplicationTests {
                     Fake.privateKey(),
                     null,
                     null,
-                    6000,
-                ),
+                    6000
+                )
             )
         assertFalse(result.connected)
         assertFalse(client.isConnected)
@@ -267,8 +267,8 @@ class FtpApplicationTests {
                 Fake.privateKey(),
                 null,
                 null,
-                6000,
-            ),
+                6000
+            )
         )
         val fileName = UUID.randomUUID().toString()
         client.storeFile(fileName, inputStream)
@@ -297,8 +297,8 @@ class FtpApplicationTests {
                 Fake.privateKey(),
                 null,
                 null,
-                6000,
-            ),
+                6000
+            )
         )
         val fileName = UUID.randomUUID().toString()
         client.storeFile(fileName, inputStream)
@@ -331,8 +331,8 @@ class FtpApplicationTests {
                     Fake.privateKey(),
                     null,
                     ConnectionMode.Passive,
-                    6000,
-                ),
+                    6000
+                )
             )
             assertTrue(client.isConnected)
             assertNotNull(client.listDirectories("."))
@@ -358,8 +358,8 @@ class FtpApplicationTests {
                     Fake.privateKey(),
                     null,
                     ConnectionMode.Passive,
-                    6000,
-                ),
+                    6000
+                )
             )
             Assertions.assertTrue(client.isConnected)
             val dir = "test/test2/test3"
@@ -381,7 +381,7 @@ class FtpApplicationTests {
             ConnectionType.FTPS,
             isImplicit = false,
             certificatePath = "src/test/resources/ftps-test-cert.jks",
-            port = port,
+            port = port
         )
         val connectionModel =
             ConnectionModel(
@@ -395,7 +395,7 @@ class FtpApplicationTests {
                 null,
                 ConnectionMode.Passive,
                 6000,
-                retryBackoffDurationsInSecond = listOf(1, 2, 3),
+                retryBackoffDurationsInSecond = listOf(1, 2, 3)
             )
         val client = ftpClientFactory.createFtpClient(ConnectionType.FTPS, ConnectionVariant.Explicit)
         val spyClient = spy(client)
@@ -414,7 +414,7 @@ class FtpApplicationTests {
 
     private fun generatePublicKey(
         keySize: Int = 2048,
-        algorithm: String = "RSA",
+        algorithm: String = "RSA"
     ): KeyPair {
         val generator = KeyPairGenerator.getInstance(algorithm)
         generator.initialize(keySize)
