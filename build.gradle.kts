@@ -8,7 +8,7 @@ plugins {
     id("org.jmailen.kotlinter") version "5.5.0"
     id("com.adarshr.test-logger") version "4.0.0"
     id("com.github.ben-manes.versions") version "0.54.0"
-    id("org.springframework.boot") version "4.0.1"
+    id("org.springframework.boot") version "4.1.0"
     id("io.spring.dependency-management") version "1.1.7"
     id("maven-publish")
     id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.4"
@@ -16,7 +16,7 @@ plugins {
 
 group = "com.valensas"
 
-java.sourceCompatibility = JavaVersion.VERSION_21
+java.sourceCompatibility = JavaVersion.VERSION_25
 
 repositories {
     mavenCentral()
@@ -48,7 +48,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.add("-Xjsr305=strict")
-        jvmTarget.set(JvmTarget.JVM_21)
+        jvmTarget.set(JvmTarget.JVM_25)
     }
 }
 
